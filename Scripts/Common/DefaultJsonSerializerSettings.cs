@@ -14,7 +14,7 @@ namespace UniT.Data
 
     public static class DefaultJsonSerializerSettings
     {
-        public static readonly JsonSerializerSettings Value = new JsonSerializerSettings()
+        public static readonly JsonSerializerSettings Value = new()
         {
             Culture                = CultureInfo.InvariantCulture,
             TypeNameHandling       = TypeNameHandling.Auto,

@@ -19,8 +19,8 @@ namespace UniT.Data.Storage
 
     public abstract class ExternalFileVersionManager : IExternalFileVersionManager
     {
-        private static readonly string PERSISTENT_DATA_PATH = Application.persistentDataPath;
-        private static readonly string TEMPORARY_CACHE_PATH = Application.temporaryCachePath;
+        private static readonly string PersistentDataPath = Application.persistentDataPath;
+        private static readonly string TemporaryCachePath = Application.temporaryCachePath;
 
         private readonly ILogger logger;
 
@@ -29,8 +29,8 @@ namespace UniT.Data.Storage
             this.logger = loggerManager.GetLogger(this);
         }
 
-        private string ZipFilePath      => Path.Combine(PERSISTENT_DATA_PATH, this.Version);
-        private string ExtractDirectory => Path.Combine(TEMPORARY_CACHE_PATH, this.Version);
+        private string ZipFilePath      => Path.Combine(PersistentDataPath, this.Version);
+        private string ExtractDirectory => Path.Combine(TemporaryCachePath, this.Version);
 
         private string Version
         {

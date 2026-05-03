@@ -74,7 +74,7 @@ namespace UniT.Data.Serialization
             private readonly IReadOnlyDictionary<FieldInfo, (int Index, IConverter Converter)> normalFields;
             private readonly IReadOnlyList<FieldInfo>                                          nestedFields;
 
-            private readonly Dictionary<FieldInfo, Populator> nestedPopulators = new Dictionary<FieldInfo, Populator>();
+            private readonly Dictionary<FieldInfo, Populator> nestedPopulators = new();
 
             public Populator(IConverterManager converterManager, ICsvData data, CsvReader reader)
             {
@@ -157,8 +157,8 @@ namespace UniT.Data.Serialization
             private readonly IReadOnlyDictionary<FieldInfo, IConverter> normalFields;
             private readonly IReadOnlyList<FieldInfo>                   nestedFields;
 
-            private readonly Dictionary<FieldInfo, Serializer>            nestedSerializers = new Dictionary<FieldInfo, Serializer>();
-            private readonly Dictionary<FieldInfo, IReadOnlyList<string>> nestedHeaders     = new Dictionary<FieldInfo, IReadOnlyList<string>>();
+            private readonly Dictionary<FieldInfo, Serializer>            nestedSerializers = new();
+            private readonly Dictionary<FieldInfo, IReadOnlyList<string>> nestedHeaders     = new();
 
             public Serializer(IConverterManager converterManager, ICsvData data, CsvWriter writer)
             {
@@ -202,7 +202,7 @@ namespace UniT.Data.Serialization
                 var row = this.data.Current;
                 foreach (var field in this.nestedFields)
                 {
-                    var serializer = this.nestedSerializers[field] = new Serializer(this.converterManager, (ICsvData)field.GetValue(row), this.writer);
+                    var serializer = this.nestedSerializers[field] = new(this.converterManager, (ICsvData)field.GetValue(row), this.writer);
                     serializer.MoveNext();
                     this.nestedHeaders.TryAdd(field, serializer => serializer.GetHeaders().ToArray(), serializer);
                 }

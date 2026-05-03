@@ -11,7 +11,7 @@ namespace UniT.Data.Conversion
     {
         private readonly IReadOnlyList<IConverter> converters;
 
-        private readonly Dictionary<Type, IConverter> converterCache = new Dictionary<Type, IConverter>();
+        private readonly Dictionary<Type, IConverter> converterCache = new();
 
         [Preserve]
         public ConverterManager(IEnumerable<IConverter> converters)
@@ -24,7 +24,7 @@ namespace UniT.Data.Conversion
         {
             lock (this.converterCache)
             {
-                return this.converterCache.GetOrAdd(type, state =>
+                return this.converterCache.GetOrAdd(type, static state =>
                 {
                     return state.converters.LastOrDefault(converter => converter.CanConvert(state.type))
                         ?? throw new ArgumentOutOfRangeException(nameof(state.type), state.type, $"No converter found for {state.type.Name}");

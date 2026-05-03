@@ -43,7 +43,7 @@ namespace UniT.Data
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator() => this.list.GetEnumerator();
 
-        private readonly List<T> list = new List<T>();
+        private readonly List<T> list = new();
 
         public int Count => this.list.Count;
 
@@ -67,7 +67,7 @@ namespace UniT.Data
 
         IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator() => this.dictionary.GetEnumerator();
 
-        private readonly Dictionary<TKey, TValue> dictionary = new Dictionary<TKey, TValue>();
+        private readonly Dictionary<TKey, TValue> dictionary = new();
 
         public int Count => this.dictionary.Count;
 

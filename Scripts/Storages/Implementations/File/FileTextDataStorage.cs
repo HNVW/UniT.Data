@@ -15,7 +15,7 @@ namespace UniT.Data.Storage
 
     public class FileTextDataStorage : WritableDataStorage<string>
     {
-        private static readonly string PERSISTENT_DATA_PATH = Application.persistentDataPath;
+        private static readonly string PersistentDataPath = Application.persistentDataPath;
 
         [Preserve]
         public FileTextDataStorage()
@@ -24,13 +24,13 @@ namespace UniT.Data.Storage
 
         public sealed override string? Read(string key)
         {
-            var path = Path.Combine(PERSISTENT_DATA_PATH, key);
+            var path = Path.Combine(PersistentDataPath, key);
             return File.Exists(path) ? File.ReadAllText(path) : null;
         }
 
         public sealed override void Write(string key, string value)
         {
-            var path = Path.Combine(PERSISTENT_DATA_PATH, key);
+            var path = Path.Combine(PersistentDataPath, key);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             File.WriteAllText(path, value);
         }
@@ -42,13 +42,13 @@ namespace UniT.Data.Storage
         #if UNIT_UNITASK
         public sealed override UniTask<string?> ReadAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var path = Path.Combine(PERSISTENT_DATA_PATH, key);
+            var path = Path.Combine(PersistentDataPath, key);
             return File.Exists(path) ? File.ReadAllTextAsync(path, cancellationToken).AsUniTask() : UniTask.FromResult(default(string?));
         }
 
         public sealed override UniTask WriteAsync(string key, string value, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var path = Path.Combine(PERSISTENT_DATA_PATH, key);
+            var path = Path.Combine(PersistentDataPath, key);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             return File.WriteAllTextAsync(path, value, cancellationToken).AsUniTask();
         }
@@ -60,7 +60,7 @@ namespace UniT.Data.Storage
         #else
         public sealed override IEnumerator ReadAsync(string key, Action<string?> callback, IProgress<float>? progress)
         {
-            var path = Path.Combine(PERSISTENT_DATA_PATH, key);
+            var path = Path.Combine(PersistentDataPath, key);
             if (!File.Exists(path))
             {
                 callback(null);
@@ -71,7 +71,7 @@ namespace UniT.Data.Storage
 
         public sealed override IEnumerator WriteAsync(string key, string value, Action? callback, IProgress<float>? progress)
         {
-            var path = Path.Combine(PERSISTENT_DATA_PATH, key);
+            var path = Path.Combine(PersistentDataPath, key);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             return File.WriteAllTextAsync(path, value).ToCoroutine(callback);
         }
