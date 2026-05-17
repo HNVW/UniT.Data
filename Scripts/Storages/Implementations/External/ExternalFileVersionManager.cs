@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Storage
+namespace UniT.Data.Storages
 {
     using System;
     using System.IO;
@@ -180,7 +180,11 @@ namespace UniT.Data.Storage
         #else
         IEnumerator IExternalFileVersionManager.GetFilePathAsync(string name, Action<string?> callback, IProgress<float>? progress)
         {
-            if (this.validated) callback(this.GetFilePath(name));
+            if (this.validated)
+            {
+                callback(this.GetFilePath(name));
+                yield break;
+            }
             if (this.validating) yield return new WaitUntil(() => !this.validating);
             this.validating = true;
             try

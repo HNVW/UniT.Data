@@ -2,9 +2,9 @@
 #nullable enable
 namespace UniT.Data.DI
 {
-    using UniT.Data.Conversion.DI;
-    using UniT.Data.Serialization.DI;
-    using UniT.Data.Storage.DI;
+    using UniT.Data.Converters.DI;
+    using UniT.Data.Serializers.DI;
+    using UniT.Data.Storages.DI;
     using UniT.DI;
     using UniT.Logging.DI;
 
@@ -16,8 +16,8 @@ namespace UniT.Data.DI
             container.AddLoggerManager();
             container.AddConverterManager();
             container.AddSerializers();
-            container.AddAssetDataStorages();
-            container.AddFileDataStorages();
+            container.AddAssetStorages();
+            container.AddFileStorages();
             container.AddInterfaces<DataManager>();
         }
     }

@@ -2,9 +2,9 @@
 #nullable enable
 namespace UniT.Data.DI
 {
-    using UniT.Data.Conversion.DI;
-    using UniT.Data.Serialization.DI;
-    using UniT.Data.Storage.DI;
+    using UniT.Data.Converters.DI;
+    using UniT.Data.Serializers.DI;
+    using UniT.Data.Storages.DI;
     using UniT.Logging.DI;
     using VContainer;
 
@@ -16,8 +16,8 @@ namespace UniT.Data.DI
             builder.RegisterLoggerManager();
             builder.RegisterConverterManager();
             builder.RegisterSerializers();
-            builder.RegisterAssetDataStorages();
-            builder.RegisterFileDataStorages();
+            builder.RegisterAssetStorages();
+            builder.RegisterFileStorages();
             builder.Register<DataManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
     }

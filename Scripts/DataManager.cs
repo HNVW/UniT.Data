@@ -4,8 +4,8 @@ namespace UniT.Data
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using UniT.Data.Serialization;
-    using UniT.Data.Storage;
+    using UniT.Data.Serializers;
+    using UniT.Data.Storages;
     using UniT.Extensions;
     using UniT.Logging;
     using UnityEngine.Scripting;
@@ -20,15 +20,14 @@ namespace UniT.Data
     {
         #region Constructor
 
-        private readonly IReadOnlyList<ISerializer>  serializers;
-        private readonly IReadOnlyList<IDataStorage> storages;
-        private readonly ILogger                     logger;
+        private readonly IReadOnlyList<ISerializer> serializers;
+        private readonly IReadOnlyList<IStorage>    storages;
+        private readonly ILogger                    logger;
 
-        private readonly Dictionary<string, object>                                       dataCache                 = new();
-        private readonly Dictionary<Type, (ISerializer Serializer, IDataStorage Storage)> serializerAndStorageCache = new();
+        private readonly Dictionary<Type, (ISerializer, IStorage)[]> serializerAndStorageCache = new();
 
         [Preserve]
-        public DataManager(IEnumerable<ISerializer> serializers, IEnumerable<IDataStorage> storages, ILoggerManager loggerManager)
+        public DataManager(IEnumerable<ISerializer> serializers, IEnumerable<IStorage> storages, ILoggerManager loggerManager)
         {
             this.serializers = serializers.ToArray();
             this.storages    = storages.ToArray();
@@ -40,99 +39,37 @@ namespace UniT.Data
 
         #region Sync
 
-        object[] IDataManager.Load(string[] keys, Type[] types, bool cache) => this.Load(keys, types, cache);
-
-        void IDataManager.Update(string[] keys, object[] datas) => this.Update(keys, datas);
-
-        void IDataManager.Unload(string[] keys) => this.Unload(keys);
-
-        void IDataManager.Save(string[] keys) => this.Save(keys);
-
-        void IDataManager.Flush(string[] keys) => this.Flush(keys);
-
-        void IDataManager.SaveAll() => this.Save(this.WritableKeys);
-
-        void IDataManager.FlushAll() => this.Flush(this.WritableKeys);
-
-        private object[] Load(string[] keys, Type[] types, bool cache)
+        object IDataManager.Load(string key, Type type)
         {
-            return IterTools.Zip(keys, types)
-                .Select((key, type) => cache
-                    ? this.dataCache.GetOrAdd(key, () => Load(key, type))
-                    : Load(key, type)
-                )
-                .ToArray();
-
-            object Load(string key, Type type)
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(type).AsSpan())
             {
-                var (serializer, storage) = this.GetSerializerAndStorage(type);
-                var rawData = storage.Read(key);
-                if (rawData is null)
-                {
-                    var data = type.GetEmptyConstructor()();
-                    this.logger.Debug($"Instantiated {key}");
-                    return data;
-                }
-                else
-                {
-                    var data = serializer.Deserialize(type, rawData);
-                    this.logger.Debug($"Loaded {key}");
-                    return data;
-                }
+                if (!storage.Contains(key)) continue;
+                var rawData   = storage.Read(key);
+                var savedData = serializer.Deserialize(type, rawData);
+                this.logger.Debug($"Loaded {key}");
+                return savedData;
             }
+            var newData = type.GetEmptyConstructor()();
+            this.logger.Debug($"Instantiated {key}");
+            return newData;
         }
 
-        private void Update(string[] keys, object[] datas)
+        void IDataManager.Save(string key, object data)
         {
-            foreach (var (key, data) in IterTools.Zip(keys, datas))
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(data.GetType()).AsSpan())
             {
-                this.dataCache[key] = data;
-                this.logger.Debug($"Updated {key}");
-            }
-        }
-
-        private void Unload(string[] keys)
-        {
-            foreach (var key in keys.AsSpan())
-            {
-                if (this.dataCache.Remove(key))
-                {
-                    this.logger.Debug($"Unloaded {key}");
-                }
-                else
-                {
-                    this.logger.Warning($"Trying to unload {key} that was not loaded");
-                }
-            }
-        }
-
-        private void Save(IEnumerable<string> keys)
-        {
-            foreach (var key in keys)
-            {
-                if (!this.dataCache.TryGetValue(key, out var data))
-                {
-                    this.logger.Warning($"Trying to save {key} that was not loaded");
-                    continue;
-                }
-                var (serializer, storage) = this.GetSerializerAndStorage(data.GetType());
-                if (storage is not IWritableDataStorage writableStorage) throw new InvalidOperationException($"{key} is not writable");
+                if (storage is not IWritableStorage writableStorage) continue;
                 var rawData = serializer.Serialize(data);
                 writableStorage.Write(key, rawData);
                 this.logger.Debug($"Saved {key}");
+                return;
             }
+            throw new InvalidOperationException($"No writable storage found for {key}");
         }
 
-        private void Flush(IEnumerable<string> keys)
+        void IDataManager.Flush()
         {
-            keys.Where(this.dataCache.ContainsKey)
-                .Select(static (key, @this) => @this.GetSerializerAndStorage(@this.dataCache[key].GetType()).Storage, this)
-                .Distinct()
-                .ForEach(static storage =>
-                {
-                    if (storage is not IWritableDataStorage writableStorage) throw new InvalidOperationException();
-                    writableStorage.Flush();
-                });
+            this.storages.OfType<IFlushableStorage>().ForEach(storage => storage.Flush());
         }
 
         #endregion
@@ -140,155 +77,84 @@ namespace UniT.Data
         #region Async
 
         #if UNIT_UNITASK
-        UniTask<object[]> IDataManager.LoadAsync(string[] keys, Type[] types, bool cache, IProgress<float>? progress, CancellationToken cancellationToken) => this.LoadAsync(keys, types, cache, progress, cancellationToken);
-
-        UniTask IDataManager.SaveAsync(string[] keys, IProgress<float>? progress, CancellationToken cancellationToken) => this.SaveAsync(keys, progress, cancellationToken);
-
-        UniTask IDataManager.FlushAsync(string[] keys, IProgress<float>? progress, CancellationToken cancellationToken) => this.FlushAsync(keys, progress, cancellationToken);
-
-        UniTask IDataManager.SaveAllAsync(IProgress<float>? progress, CancellationToken cancellationToken) => this.SaveAsync(this.WritableKeys, progress, cancellationToken);
-
-        UniTask IDataManager.FlushAllAsync(IProgress<float>? progress, CancellationToken cancellationToken) => this.FlushAsync(this.WritableKeys, progress, cancellationToken);
-
-        private UniTask<object[]> LoadAsync(string[] keys, Type[] types, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
+        async UniTask<object> IDataManager.LoadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return IterTools.Zip(keys, types).SelectAsync(
-                (key_type, progress, cancellationToken) => cache
-                    ? this.dataCache.GetOrAddAsync(key_type.Item1, () => LoadAsync(key_type.Item1, key_type.Item2, progress, cancellationToken))
-                    : LoadAsync(key_type.Item1, key_type.Item2, progress, cancellationToken),
-                progress,
-                cancellationToken
-            ).ToArrayAsync();
-
-            async UniTask<object> LoadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(type))
             {
-                var (serializer, storage) = this.GetSerializerAndStorage(type);
-                var rawData = await storage.ReadAsync(key, progress, cancellationToken);
-                if (rawData is null)
-                {
-                    var data = type.GetEmptyConstructor()();
-                    this.logger.Debug($"Instantiated {key}");
-                    return data;
-                }
-                else
-                {
-                    var data = await serializer.DeserializeAsync(type, rawData, cancellationToken);
-                    this.logger.Debug($"Loaded {key}");
-                    return data;
-                }
+                if (!await storage.ContainsAsync(key, cancellationToken: cancellationToken)) continue;
+                var rawData   = await storage.ReadAsync(key, progress, cancellationToken);
+                var savedData = await serializer.DeserializeAsync(type, rawData, cancellationToken: cancellationToken);
+                this.logger.Debug($"Loaded {key}");
+                return savedData;
             }
+            var newData = type.GetEmptyConstructor()();
+            this.logger.Debug($"Instantiated {key}");
+            return newData;
         }
 
-        private UniTask SaveAsync(IEnumerable<string> keys, IProgress<float>? progress, CancellationToken cancellationToken)
+        async UniTask IDataManager.SaveAsync(string key, object data, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return keys.ForEachAsync(
-                async (key, progress, cancellationToken) =>
-                {
-                    if (!this.dataCache.TryGetValue(key, out var data))
-                    {
-                        this.logger.Warning($"Trying to save {key} that was not loaded");
-                        return;
-                    }
-                    var (serializer, storage) = this.GetSerializerAndStorage(data.GetType());
-                    if (storage is not IWritableDataStorage writableStorage) throw new InvalidOperationException($"{key} is not writable");
-                    var rawData = await serializer.SerializeAsync(data, cancellationToken);
-                    await writableStorage.WriteAsync(key, rawData, progress, cancellationToken);
-                    this.logger.Debug($"Saved {key}");
-                },
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(data.GetType()))
+            {
+                if (storage is not IWritableStorage writableStorage) continue;
+                var rawData = await serializer.SerializeAsync(data, cancellationToken);
+                await writableStorage.WriteAsync(key, rawData, progress, cancellationToken);
+                this.logger.Debug($"Saved {key}");
+                return;
+            }
+            throw new InvalidOperationException($"No writable storage found for {key}");
+        }
+
+        UniTask IDataManager.FlushAsync(IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            return this.storages.OfType<IFlushableStorage>().ForEachAsync(
+                static (storage, progress, cancellationToken) => storage.FlushAsync(progress, cancellationToken),
                 progress,
                 cancellationToken
             );
-        }
-
-        private UniTask FlushAsync(IEnumerable<string> keys, IProgress<float>? progress, CancellationToken cancellationToken)
-        {
-            return keys.Where(this.dataCache.ContainsKey)
-                .Select(static (key, @this) => @this.GetSerializerAndStorage(@this.dataCache[key].GetType()).Storage, this)
-                .Distinct()
-                .ForEachAsync(
-                    static async (storage, progress, cancellationToken) =>
-                    {
-                        if (storage is not IWritableDataStorage writableStorage) throw new InvalidOperationException();
-                        await writableStorage.FlushAsync(progress, cancellationToken);
-                    },
-                    progress,
-                    cancellationToken
-                );
         }
         #else
-        IEnumerator IDataManager.LoadAsync(string[] keys, Type[] types, Action<object[]> callback, bool cache, IProgress<float>? progress) => this.LoadAsync(keys, types, callback, cache, progress);
-
-        IEnumerator IDataManager.SaveAsync(string[] keys, Action? callback, IProgress<float>? progress) => this.SaveAsync(keys, callback, progress);
-
-        IEnumerator IDataManager.FlushAsync(string[] keys, Action? callback, IProgress<float>? progress) => this.FlushAsync(keys, callback, progress);
-
-        IEnumerator IDataManager.SaveAllAsync(Action? callback, IProgress<float>? progress) => this.SaveAsync(this.WritableKeys, callback, progress);
-
-        IEnumerator IDataManager.FlushAllAsync(Action? callback, IProgress<float>? progress) => this.FlushAsync(this.WritableKeys, callback, progress);
-
-        private IEnumerator LoadAsync(string[] keys, Type[] types, Action<object[]> callback, bool cache, IProgress<float>? progress)
+        IEnumerator IDataManager.LoadAsync(string key, Type type, Action<object> callback, IProgress<float>? progress)
         {
-            return IterTools.Zip(keys, types).SelectAsync<(string, Type), object>(
-                (key_type, callback, progress) => cache
-                    ? this.dataCache.GetOrAddAsync(key_type.Item1, callback => LoadAsync(key_type.Item1, key_type.Item2, callback, progress), callback)
-                    : LoadAsync(key_type.Item1, key_type.Item2, callback, progress),
-                datas => callback(datas.ToArray()),
-                progress
-            );
-
-            IEnumerator LoadAsync(string key, Type type, Action<object> callback, IProgress<float>? progress)
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(type))
             {
-                var (serializer, storage) = this.GetSerializerAndStorage(type);
-                var rawData = default(object);
+                var contains = false;
+                yield return storage.ContainsAsync(key, result => contains = result);
+                if (!contains) continue;
+                var rawData = default(object)!;
                 yield return storage.ReadAsync(key, result => rawData = result, progress);
-                if (rawData is null)
-                {
-                    var data = type.GetEmptyConstructor()();
-                    this.logger.Debug($"Instantiated {key}");
-                    callback(data);
-                }
-                else
-                {
-                    var data = default(object)!;
-                    yield return serializer.DeserializeAsync(type, rawData, result => data = result);
-                    this.logger.Debug($"Loaded {key}");
-                    callback(data);
-                }
+                var savedData = default(object)!;
+                yield return serializer.DeserializeAsync(type, rawData, result => savedData = result);
+                this.logger.Debug($"Loaded {key}");
+                callback(savedData);
+                yield break;
             }
+            var newData = type.GetEmptyConstructor()();
+            this.logger.Debug($"Instantiated {key}");
+            callback(newData);
         }
 
-        private IEnumerator SaveAsync(IEnumerable<string> keys, Action? callback, IProgress<float>? progress)
+        IEnumerator IDataManager.SaveAsync(string key, object data, Action? callback, IProgress<float>? progress)
         {
-            return keys.ForEachAsync(SaveAsync, callback, progress);
-
-            IEnumerator SaveAsync(string key, IProgress<float>? progress)
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(data.GetType()))
             {
-                if (!this.dataCache.TryGetValue(key, out var data))
-                {
-                    this.logger.Warning($"Trying to save {key} that was not loaded");
-                    yield break;
-                }
-                var (serializer, storage) = this.GetSerializerAndStorage(data.GetType());
-                if (storage is not IWritableDataStorage writableStorage) throw new InvalidOperationException($"{key} is not writable");
+                if (storage is not IWritableStorage writableStorage) continue;
                 var rawData = default(object)!;
                 yield return serializer.SerializeAsync(data, result => rawData = result);
                 yield return writableStorage.WriteAsync(key, rawData, progress: progress);
                 this.logger.Debug($"Saved {key}");
+                yield break;
             }
+            throw new InvalidOperationException($"No writable storage found for {key}");
         }
 
-        private IEnumerator FlushAsync(IEnumerable<string> keys, Action? callback, IProgress<float>? progress)
+        IEnumerator IDataManager.FlushAsync(Action? callback, IProgress<float>? progress)
         {
-            return keys.Where(this.dataCache.ContainsKey)
-                .Select(static (key, @this) => @this.GetSerializerAndStorage(@this.dataCache[key].GetType()).Storage, this)
-                .Distinct()
-                .ForEachAsync(FlushAsync, callback, progress);
-
-            static IEnumerator FlushAsync(IDataStorage storage, IProgress<float>? progress)
-            {
-                if (storage is not IWritableDataStorage writableStorage) throw new InvalidOperationException();
-                yield return writableStorage.FlushAsync(progress: progress);
-            }
+            return this.storages.OfType<IFlushableStorage>().ForEachAsync(
+                static (storage, progress) => storage.FlushAsync(progress: progress),
+                callback,
+                progress
+            );
         }
         #endif
 
@@ -296,21 +162,24 @@ namespace UniT.Data
 
         #region Private
 
-        private IEnumerable<string> WritableKeys => this.dataCache.WhereValue(static (data, @this) => @this.GetSerializerAndStorage(data.GetType()).Storage is IWritableDataStorage, this).SelectKeys();
-
-        private (ISerializer Serializer, IDataStorage Storage) GetSerializerAndStorage(Type type)
+        private (ISerializer, IStorage)[] GetSerializerAndStorage(Type type)
         {
-            return this.serializerAndStorageCache.GetOrAdd(type, static state =>
-            {
-                var serializersAndStorages = IterTools.Product(
-                        state.@this.serializers.Where(static (serializer, type) => serializer.CanSerialize(type), state.type),
-                        state.@this.storages.Where(static (storage,       type) => storage.CanStore(type), state.type)
-                    )
-                    .Where(static (serializer, storage) => serializer.RawDataType == storage.RawDataType)
-                    .ToArray();
-                if (serializersAndStorages.Length is 0) throw new InvalidOperationException($"No serializer or storage found for {state.type.Name}");
-                return serializersAndStorages[^1];
-            }, (@this: this, type));
+            return this.serializerAndStorageCache.GetOrAdd(
+                type,
+                static state =>
+                {
+                    var result = IterTools.Product(
+                            state.@this.serializers.Where(static (serializer, type) => serializer.CanSerialize(type), state.type),
+                            state.@this.storages.Where(static (storage,       type) => storage.CanStore(type), state.type)
+                        )
+                        .Where(static (serializer, storage) => serializer.RawDataType == storage.RawDataType)
+                        .Reverse()
+                        .ToArray();
+                    if (result.Length is 0) throw new InvalidOperationException($"No serializer or storage found for {state.type.Name}");
+                    return result;
+                },
+                (@this: this, type)
+            );
         }
 
         #endregion
