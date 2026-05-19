@@ -9,7 +9,6 @@ namespace UniT.Data
     using UniT.Data.Serializers;
     using UniT.Data.Storages;
     using UniT.Extensions;
-    using UniT.Extensions.UniTask;
     using UniT.Logging;
     using UnityEngine.Scripting;
 
