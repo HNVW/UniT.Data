@@ -10,10 +10,10 @@ namespace UniT.Data.Storages.External
 
     public class ExternalTextStorage : Storage<string>, IReadableStorage
     {
-        private readonly IExternalFileVersionManager externalFileVersionManager;
+        private readonly ExternalFileVersionManager externalFileVersionManager;
 
         [Preserve]
-        public ExternalTextStorage(IExternalFileVersionManager externalFileVersionManager)
+        public ExternalTextStorage(ExternalFileVersionManager externalFileVersionManager)
         {
             this.externalFileVersionManager = externalFileVersionManager;
         }

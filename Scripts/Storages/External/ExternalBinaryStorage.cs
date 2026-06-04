@@ -10,10 +10,10 @@ namespace UniT.Data.Storages.External
 
     public class ExternalBinaryStorage : Storage<byte[]>, IReadableStorage
     {
-        private readonly IExternalFileVersionManager externalFileVersionManager;
+        private readonly ExternalFileVersionManager externalFileVersionManager;
 
         [Preserve]
-        public ExternalBinaryStorage(IExternalFileVersionManager externalFileVersionManager)
+        public ExternalBinaryStorage(ExternalFileVersionManager externalFileVersionManager)
         {
             this.externalFileVersionManager = externalFileVersionManager;
         }

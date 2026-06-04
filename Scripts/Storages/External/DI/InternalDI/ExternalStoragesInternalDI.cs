@@ -5,8 +5,10 @@ namespace UniT.Data.Storages.External.DI
 
     public static class ExternalStoragesInternalDI
     {
-        public static void AddExternalStorages(this DependencyContainer container)
+        public static void AddExternalStorages<T>(this DependencyContainer container) where T : IExternalFileVersionProvider
         {
+            container.AddInterfaces<T>();
+            container.AddInterfaces<ExternalFileVersionManager>();
             container.AddInterfaces<ExternalBinaryStorage>();
             container.AddInterfaces<ExternalTextStorage>();
         }
