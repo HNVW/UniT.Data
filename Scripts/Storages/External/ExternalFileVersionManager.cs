@@ -130,9 +130,11 @@ namespace UniT.Data.Storages.External
 
         private UniTask<bool> ValidateAndExtractAsync(CancellationToken cancellationToken)
         {
-            return Application.platform is RuntimePlatform.WebGLPlayer
-                ? UniTask.FromResult(ValidateAndExtract())
-                : UniTask.RunOnThreadPool(ValidateAndExtract, cancellationToken: cancellationToken);
+            #if !UNITY_WEBGL
+            return UniTask.RunOnThreadPool(ValidateAndExtract, cancellationToken: cancellationToken);
+            #else
+            return UniTask.FromResult(ValidateAndExtract());
+            #endif
 
             bool ValidateAndExtract()
             {

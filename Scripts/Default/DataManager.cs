@@ -10,7 +10,6 @@ namespace UniT.Data.Default
     using UniT.Data.Storages;
     using UniT.Extensions;
     using UniT.Logging;
-    using UnityEngine;
     using UnityEngine.Scripting;
     using ILogger = UniT.Logging.ILogger;
 
@@ -42,9 +41,11 @@ namespace UniT.Data.Default
                 if (storage is not IReadableStorage readableStorage) continue;
                 if (!await readableStorage.ContainsAsync(key, cancellationToken: cancellationToken)) continue;
                 var rawData = await readableStorage.ReadAsync(key, progress, cancellationToken);
-                var savedData = Application.platform is RuntimePlatform.WebGLPlayer
-                    ? serializer.Deserialize(type, rawData)
-                    : await UniTask.RunOnThreadPool(() => serializer.Deserialize(type, rawData), cancellationToken: cancellationToken);
+                #if !UNITY_WEBGL
+                var savedData = await UniTask.RunOnThreadPool(() => serializer.Deserialize(type, rawData), cancellationToken: cancellationToken);
+                #else
+                var savedData = serializer.Deserialize(type, rawData);
+                #endif
                 this.logger.Debug($"Loaded {key}");
                 return savedData;
             }
