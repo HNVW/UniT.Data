@@ -48,8 +48,16 @@ namespace UniT.Data.Converters
         protected abstract string ConvertToString(Type type, object obj);
     }
 
-    public abstract class Converter<T> : Converter
+    public abstract class Converter<T> : Converter where T : notnull
     {
-        protected sealed override bool CanConvert(Type type) => typeof(T).IsAssignableFrom(type);
+        protected sealed override bool CanConvert(Type type) => type == typeof(T);
+
+        protected sealed override object ConvertFromString(Type type, string str) => this.ConvertFromString(str);
+
+        protected sealed override string ConvertToString(Type type, object obj) => this.ConvertToString((T)obj);
+
+        protected abstract T ConvertFromString(string str);
+
+        protected abstract string ConvertToString(T obj);
     }
 }

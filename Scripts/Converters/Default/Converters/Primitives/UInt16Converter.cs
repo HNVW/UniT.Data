@@ -14,14 +14,14 @@ namespace UniT.Data.Converters.Default
             this.formatProvider = formatProvider;
         }
 
-        protected override object ConvertFromString(Type type, string str)
+        protected override ushort ConvertFromString(string str)
         {
             return ushort.Parse(str, this.formatProvider);
         }
 
-        protected override string ConvertToString(Type type, object obj)
+        protected override string ConvertToString(ushort obj)
         {
-            return ((ushort)obj).ToString(this.formatProvider);
+            return obj.ToString(this.formatProvider);
         }
     }
 }

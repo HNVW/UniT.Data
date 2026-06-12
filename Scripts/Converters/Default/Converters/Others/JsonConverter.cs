@@ -5,7 +5,7 @@ namespace UniT.Data.Converters.Default
     using Newtonsoft.Json;
     using UnityEngine.Scripting;
 
-    public sealed class JsonConverter : Converter<object>
+    public sealed class JsonConverter : Converter
     {
         private readonly JsonSerializerSettings settings;
 
@@ -14,6 +14,8 @@ namespace UniT.Data.Converters.Default
         {
             this.settings = settings;
         }
+
+        protected override bool CanConvert(Type type) => true;
 
         protected override object ConvertFromString(Type type, string str)
         {

@@ -47,7 +47,7 @@ namespace UniT.Data.Converters.Default.DI
             container.BindInstance(jsonSerializerSettings);
             container.BindInterfacesTo<JsonConverter>().AsSingle();
 
-            #region Numbers
+            #region Primitives
 
             container.BindInterfacesTo<ByteConverter>().AsSingle();
             container.BindInterfacesTo<Int16Converter>().AsSingle();
@@ -60,38 +60,25 @@ namespace UniT.Data.Converters.Default.DI
             container.BindInterfacesTo<DoubleConverter>().AsSingle();
             container.BindInterfacesTo<DecimalConverter>().AsSingle();
 
-            #endregion
-
-            #region Time
+            container.BindInterfacesTo<BooleanConverter>().AsSingle();
+            container.BindInterfacesTo<CharConverter>().AsSingle();
+            container.BindInterfacesTo<StringConverter>().AsSingle();
 
             container.BindInterfacesTo<DateTimeConverter>().AsSingle();
             container.BindInterfacesTo<DateTimeOffsetConverter>().AsSingle();
             container.BindInterfacesTo<TimeSpanConverter>().AsSingle();
 
-            #endregion
-
-            #region Others
-
-            container.BindInterfacesTo<BooleanConverter>().AsSingle();
-            container.BindInterfacesTo<CharConverter>().AsSingle();
-            container.BindInterfacesTo<StringConverter>().AsSingle();
-            container.BindInterfacesTo<EnumConverter>().AsSingle();
-            container.BindInterfacesTo<NullableConverter>().AsSingle();
             container.BindInterfacesTo<UriConverter>().AsSingle();
             container.BindInterfacesTo<GuidConverter>().AsSingle();
 
             #endregion
 
-            #region Tuples
+            #region Others
 
+            container.BindInterfacesTo<EnumConverter>().AsSingle();
+            container.BindInterfacesTo<NullableConverter>().AsSingle();
             container.BindInterfacesTo<TupleConverter>().AsSingle();
-            container.BindInterfacesTo<Vector2Converter>().AsSingle();    // Depends on TupleConverter
-            container.BindInterfacesTo<Vector3Converter>().AsSingle();    // Depends on TupleConverter
-            container.BindInterfacesTo<Vector4Converter>().AsSingle();    // Depends on TupleConverter
-            container.BindInterfacesTo<Vector2IntConverter>().AsSingle(); // Depends on TupleConverter
-            container.BindInterfacesTo<Vector3IntConverter>().AsSingle(); // Depends on TupleConverter
-            container.BindInterfacesTo<ColorConverter>().AsSingle();      // Depends on TupleConverter
-            container.BindInterfacesTo<Color32Converter>().AsSingle();    // Depends on TupleConverter
+            container.BindInterfacesTo<AbstractTupleConverter>().AsSingle();
 
             #endregion
 

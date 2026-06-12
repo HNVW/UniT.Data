@@ -11,7 +11,6 @@ namespace UniT.Data.Default
     using UniT.Extensions;
     using UniT.Logging;
     using UnityEngine.Scripting;
-    using ILogger = UniT.Logging.ILogger;
 
     public sealed class DataManager : IDataManager
     {

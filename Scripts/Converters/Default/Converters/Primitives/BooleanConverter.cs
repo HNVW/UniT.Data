@@ -1,7 +1,6 @@
 #nullable enable
 namespace UniT.Data.Converters.Default
 {
-    using System;
     using UnityEngine.Scripting;
 
     public sealed class BooleanConverter : Converter<bool>
@@ -11,12 +10,12 @@ namespace UniT.Data.Converters.Default
         {
         }
 
-        protected override object ConvertFromString(Type type, string str)
+        protected override bool ConvertFromString(string str)
         {
             return bool.Parse(str);
         }
 
-        protected override string ConvertToString(Type type, object obj)
+        protected override string ConvertToString(bool obj)
         {
             return obj.ToString();
         }

@@ -47,7 +47,7 @@ namespace UniT.Data.Converters.Default.DI
             builder.RegisterInstance(jsonSerializerSettings);
             builder.Register<JsonConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
-            #region Numbers
+            #region Primitives
 
             builder.Register<ByteConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<Int16Converter>(Lifetime.Singleton).AsImplementedInterfaces();
@@ -60,38 +60,25 @@ namespace UniT.Data.Converters.Default.DI
             builder.Register<DoubleConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<DecimalConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
-            #endregion
-
-            #region Time
+            builder.Register<BooleanConverter>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<CharConverter>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<StringConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
             builder.Register<DateTimeConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<DateTimeOffsetConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<TimeSpanConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
-            #endregion
-
-            #region Others
-
-            builder.Register<BooleanConverter>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<CharConverter>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<StringConverter>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<EnumConverter>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<NullableConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<UriConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<GuidConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
             #endregion
 
-            #region Tuples
+            #region Others
 
+            builder.Register<EnumConverter>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<NullableConverter>(Lifetime.Singleton).AsImplementedInterfaces();
             builder.Register<TupleConverter>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<Vector2Converter>(Lifetime.Singleton).AsImplementedInterfaces();    // Depends on TupleConverter
-            builder.Register<Vector3Converter>(Lifetime.Singleton).AsImplementedInterfaces();    // Depends on TupleConverter
-            builder.Register<Vector4Converter>(Lifetime.Singleton).AsImplementedInterfaces();    // Depends on TupleConverter
-            builder.Register<Vector2IntConverter>(Lifetime.Singleton).AsImplementedInterfaces(); // Depends on TupleConverter
-            builder.Register<Vector3IntConverter>(Lifetime.Singleton).AsImplementedInterfaces(); // Depends on TupleConverter
-            builder.Register<ColorConverter>(Lifetime.Singleton).AsImplementedInterfaces();      // Depends on TupleConverter
-            builder.Register<Color32Converter>(Lifetime.Singleton).AsImplementedInterfaces();    // Depends on TupleConverter
+            builder.Register<AbstractTupleConverter>(Lifetime.Singleton).AsImplementedInterfaces();
 
             #endregion
 

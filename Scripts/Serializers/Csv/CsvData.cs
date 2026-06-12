@@ -25,7 +25,7 @@ namespace UniT.Data.Serializers.Csv
         IEnumerator ICsvData.GetValues() { yield return this; }
     }
 
-    public class CsvData<T> : ICsvData, IReadOnlyList<T>
+    public class CsvData<T> : ICsvData, IReadOnlyList<T> where T : notnull
     {
         [Preserve]
         public CsvData()
@@ -49,7 +49,7 @@ namespace UniT.Data.Serializers.Csv
         public T this[int index] => this.list[index];
     }
 
-    public class CsvData<TKey, TValue> : ICsvData, IReadOnlyDictionary<TKey, TValue>
+    public class CsvData<TKey, TValue> : ICsvData, IReadOnlyDictionary<TKey, TValue> where TKey : notnull where TValue : notnull
     {
         [Preserve]
         public CsvData()

@@ -20,7 +20,7 @@ namespace UniT.Data.Converters.Default
 
         protected override string ConvertToString(Type type, object obj)
         {
-            return obj.ToString();
+            return this.Manager.ConvertToString(Nullable.GetUnderlyingType(type)!, obj);
         }
     }
 }

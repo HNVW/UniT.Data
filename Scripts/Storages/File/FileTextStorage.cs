@@ -2,16 +2,20 @@
 namespace UniT.Data.Storages.File
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Runtime.CompilerServices;
     using System.Threading;
     using Cysharp.Threading.Tasks;
+    using UniT.Extensions;
     using UnityEngine;
     using UnityEngine.Scripting;
 
-    public class FileTextStorage : Storage<string>, IWritableStorage
+    public class FileTextStorage : Storage<string>, IFlushableStorage
     {
         private static readonly string PersistentDataPath = Application.persistentDataPath;
+
+        private readonly HashSet<string> dirtyKeys = new();
 
         [Preserve]
         public FileTextStorage()
@@ -30,14 +34,37 @@ namespace UniT.Data.Storages.File
             return File.ReadAllTextAsync(GetPath(key), cancellationToken).AsUniTask().ContinueWith(result => (object)result);
         }
 
-        UniTask IWritableStorage.WriteAsync(string key, object value, IProgress<float>? progress, CancellationToken cancellationToken)
+        async UniTask IWritableStorage.WriteAsync(string key, object value, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var path = GetPath(key);
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            return File.WriteAllTextAsync(path, (string)value, cancellationToken).AsUniTask();
+            var tempPath = GetTempPath(key);
+            Directory.CreateDirectory(Path.GetDirectoryName(tempPath)!);
+            await File.WriteAllTextAsync(tempPath, (string)value, cancellationToken).AsUniTask();
+            this.dirtyKeys.Add(key);
+        }
+
+        UniTask IFlushableStorage.FlushAsync(IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            this.dirtyKeys.SafeForEach(static (key, dirtyKeys) =>
+            {
+                var tempPath = GetTempPath(key);
+                var path     = GetPath(key);
+                if (File.Exists(path))
+                {
+                    File.Replace(tempPath, path, null);
+                }
+                else
+                {
+                    File.Move(tempPath, path);
+                }
+                dirtyKeys.Remove(key);
+            }, this.dirtyKeys);
+            return UniTask.CompletedTask;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string GetPath(string key) => Path.Combine(PersistentDataPath, key);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static string GetTempPath(string key) => GetPath(key) + ".tmp";
     }
 }

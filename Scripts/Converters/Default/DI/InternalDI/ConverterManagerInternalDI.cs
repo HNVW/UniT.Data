@@ -47,7 +47,7 @@ namespace UniT.Data.Converters.Default.DI
             container.Add(jsonSerializerSettings);
             container.AddInterfaces<JsonConverter>();
 
-            #region Numbers
+            #region Primitives
 
             container.AddInterfaces<ByteConverter>();
             container.AddInterfaces<Int16Converter>();
@@ -60,38 +60,25 @@ namespace UniT.Data.Converters.Default.DI
             container.AddInterfaces<DoubleConverter>();
             container.AddInterfaces<DecimalConverter>();
 
-            #endregion
-
-            #region Time
+            container.AddInterfaces<BooleanConverter>();
+            container.AddInterfaces<CharConverter>();
+            container.AddInterfaces<StringConverter>();
 
             container.AddInterfaces<DateTimeConverter>();
             container.AddInterfaces<DateTimeOffsetConverter>();
             container.AddInterfaces<TimeSpanConverter>();
 
-            #endregion
-
-            #region Others
-
-            container.AddInterfaces<BooleanConverter>();
-            container.AddInterfaces<CharConverter>();
-            container.AddInterfaces<StringConverter>();
-            container.AddInterfaces<EnumConverter>();
-            container.AddInterfaces<NullableConverter>();
             container.AddInterfaces<UriConverter>();
             container.AddInterfaces<GuidConverter>();
 
             #endregion
 
-            #region Tuples
+            #region Others
 
+            container.AddInterfaces<EnumConverter>();
+            container.AddInterfaces<NullableConverter>();
             container.AddInterfaces<TupleConverter>();
-            container.AddInterfaces<Vector2Converter>();    // Depends on TupleConverter
-            container.AddInterfaces<Vector3Converter>();    // Depends on TupleConverter
-            container.AddInterfaces<Vector4Converter>();    // Depends on TupleConverter
-            container.AddInterfaces<Vector2IntConverter>(); // Depends on TupleConverter
-            container.AddInterfaces<Vector3IntConverter>(); // Depends on TupleConverter
-            container.AddInterfaces<ColorConverter>();      // Depends on TupleConverter
-            container.AddInterfaces<Color32Converter>();    // Depends on TupleConverter
+            container.AddInterfaces<AbstractTupleConverter>();
 
             #endregion
 

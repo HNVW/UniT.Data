@@ -3,7 +3,7 @@ namespace UniT.Data.Storages.File.DI
 {
     using Zenject;
 
-    public static class AssetStoragesZenject
+    public static class FileStoragesZenject
     {
         public static void BindFileStorages(this DiContainer container)
         {

@@ -29,7 +29,7 @@ namespace UniT.Data.Storages.External
         {
             var path = await this.externalFileVersionManager.GetFilePathAsync(key, progress, cancellationToken)
                 ?? throw new ArgumentOutOfRangeException(nameof(key), key, $"{key} not found");
-            return await File.ReadAllTextAsync(path, cancellationToken);
+            return await File.ReadAllBytesAsync(path, cancellationToken);
         }
     }
 }

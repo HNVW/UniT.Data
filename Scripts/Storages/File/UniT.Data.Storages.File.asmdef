@@ -2,6 +2,7 @@
   "name": "UniT.Data.Storages.File",
   "references": [
     "UniT.Data.Storages",
+    "UniT.Extensions",
     "UniTask"
   ]
 }

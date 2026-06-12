@@ -1,7 +1,6 @@
 #nullable enable
 namespace UniT.Data.Converters.Default
 {
-    using System;
     using UnityEngine.Scripting;
 
     public sealed class CharConverter : Converter<char>
@@ -11,12 +10,12 @@ namespace UniT.Data.Converters.Default
         {
         }
 
-        protected override object ConvertFromString(Type type, string str)
+        protected override char ConvertFromString(string str)
         {
             return char.Parse(str);
         }
 
-        protected override string ConvertToString(Type type, object obj)
+        protected override string ConvertToString(char obj)
         {
             return obj.ToString();
         }

@@ -11,12 +11,12 @@ namespace UniT.Data.Converters.Default
         {
         }
 
-        protected override object ConvertFromString(Type type, string str)
+        protected override Uri ConvertFromString(string str)
         {
-            return new Uri(str);
+            return new(str);
         }
 
-        protected override string ConvertToString(Type type, object obj)
+        protected override string ConvertToString(Uri obj)
         {
             return obj.ToString();
         }

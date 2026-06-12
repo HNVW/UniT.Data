@@ -18,10 +18,10 @@ namespace UniT.Data.Converters
         public string ConvertToString(Type type, object obj) => this.GetConverter(type).ConvertToString(type, obj);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T? GetDefaultValue<T>() => (T?)this.GetDefaultValue(typeof(T));
+        public T? GetDefaultValue<T>() where T : notnull => (T?)this.GetDefaultValue(typeof(T));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public T ConvertFromString<T>(string str) => (T)this.ConvertFromString(typeof(T), str);
+        public T ConvertFromString<T>(string str) where T : notnull => (T)this.ConvertFromString(typeof(T), str);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public string ConvertToString<T>(T obj) where T : notnull => this.ConvertToString(typeof(T), obj);

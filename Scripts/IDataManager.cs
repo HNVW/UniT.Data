@@ -16,7 +16,7 @@ namespace UniT.Data
         public UniTask FlushAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(key, typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
+        public UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync(key, typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
 
         #region Implicit Key
 
@@ -27,7 +27,7 @@ namespace UniT.Data
         public UniTask SaveAsync(object data, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(data.GetType().GetKey(), data, progress, cancellationToken);
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public UniTask<T> LoadAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(typeof(T).GetKey(), typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
+        public UniTask<T> LoadAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync(typeof(T).GetKey(), typeof(T), progress, cancellationToken).ContinueWith(data => (T)data);
 
         #endregion
     }
