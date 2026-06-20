@@ -60,7 +60,7 @@ namespace UniT.Data.Storages.External
                 {
                     if (Version.IsNullOrWhiteSpace())
                     {
-                        this.logger.Error("No version available");
+                        this.logger.Warning("No version available");
                         this.validateResult = false;
                         return null;
                     }
@@ -100,8 +100,8 @@ namespace UniT.Data.Storages.External
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
-                this.logger.Exception(e);
                 this.logger.Error("Failed to fetch version");
+                this.logger.Exception(e);
                 return null;
             }
         }
@@ -122,8 +122,8 @@ namespace UniT.Data.Storages.External
             }
             catch (Exception e) when (e is not OperationCanceledException)
             {
-                this.logger.Exception(e);
                 this.logger.Error("Failed to download zip file");
+                this.logger.Exception(e);
                 return false;
             }
         }
@@ -164,8 +164,8 @@ namespace UniT.Data.Storages.External
                 }
                 catch (Exception e)
                 {
-                    this.logger.Exception(e);
                     this.logger.Error("Failed to validate or extract zip file");
+                    this.logger.Exception(e);
                     return false;
                 }
 
