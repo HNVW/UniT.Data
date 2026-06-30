@@ -3,10 +3,7 @@ namespace UniT.Data.Converters.Default.DI
 {
     using System;
     using System.Globalization;
-    using Newtonsoft.Json;
-    using Newtonsoft.Json.Converters;
     using UniT.DI;
-    using UniT.Extensions;
     using JsonConverter = JsonConverter;
 
     public static class ConverterManagerInternalDI
@@ -24,74 +21,32 @@ namespace UniT.Data.Converters.Default.DI
         {
             container.AddDefaultConverters(
                 separatorConfig: new(),
-                formatProvider: CultureInfo.InvariantCulture,
-                jsonSerializerSettings: new()
-                {
-                    Culture                = CultureInfo.InvariantCulture,
-                    TypeNameHandling       = TypeNameHandling.Auto,
-                    ReferenceLoopHandling  = ReferenceLoopHandling.Ignore,
-                    ObjectCreationHandling = ObjectCreationHandling.Replace,
-                    ContractResolver       = new WritablePropertyOnlyContractResolver(),
-                    Converters = new Newtonsoft.Json.JsonConverter[]
-                    {
-                        new StringEnumConverter(),
-                    },
-                }
+                formatProvider: CultureInfo.InvariantCulture
             );
         }
 
-        public static void AddDefaultConverters(this DependencyContainer container, SeparatorConfig separatorConfig, IFormatProvider formatProvider, JsonSerializerSettings jsonSerializerSettings)
+        public static void AddDefaultConverters(this DependencyContainer container, SeparatorConfig separatorConfig, IFormatProvider formatProvider)
         {
             container.Add(separatorConfig);
             container.Add(formatProvider);
-            container.Add(jsonSerializerSettings);
+
             container.AddInterfaces<JsonConverter>();
-
-            #region Primitives
-
-            container.AddInterfaces<ByteConverter>();
-            container.AddInterfaces<Int16Converter>();
-            container.AddInterfaces<Int32Converter>();
-            container.AddInterfaces<Int64Converter>();
-            container.AddInterfaces<UInt16Converter>();
-            container.AddInterfaces<UInt32Converter>();
-            container.AddInterfaces<UInt64Converter>();
-            container.AddInterfaces<SingleConverter>();
-            container.AddInterfaces<DoubleConverter>();
-            container.AddInterfaces<DecimalConverter>();
-
-            container.AddInterfaces<BooleanConverter>();
-            container.AddInterfaces<CharConverter>();
-            container.AddInterfaces<StringConverter>();
-
-            container.AddInterfaces<DateTimeConverter>();
+            container.AddInterfaces<PrimitiveConverter>();
             container.AddInterfaces<DateTimeOffsetConverter>();
             container.AddInterfaces<TimeSpanConverter>();
-
             container.AddInterfaces<UriConverter>();
             container.AddInterfaces<GuidConverter>();
-
-            #endregion
-
-            #region Others
-
             container.AddInterfaces<EnumConverter>();
             container.AddInterfaces<NullableConverter>();
+
             container.AddInterfaces<TupleConverter>();
             container.AddInterfaces<AbstractTupleConverter>();
-
-            #endregion
-
-            #region Collections
-
             container.AddInterfaces<ArrayConverter>();
             container.AddInterfaces<CollectionConverter>();         // Depends on ArrayConverter
             container.AddInterfaces<AbstractCollectionConverter>(); // Depends on ArrayConverter
             container.AddInterfaces<DictionaryConverter>();         // Depends on ArrayConverter
             container.AddInterfaces<ReadOnlyDictionaryConverter>(); // Depends on DictionaryConverter
             container.AddInterfaces<AbstractDictionaryConverter>(); // Depends on DictionaryConverter
-
-            #endregion
         }
     }
 }
