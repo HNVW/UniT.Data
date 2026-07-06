@@ -1,5 +1,6 @@
 {
   "name": "UniT.Data.Default",
+  "overrideReferences": true,
   "references": [
     "UniT.Data",
     "UniT.Extensions",

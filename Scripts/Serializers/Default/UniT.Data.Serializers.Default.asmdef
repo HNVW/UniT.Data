@@ -1,5 +1,6 @@
 {
   "name": "UniT.Data.Serializers.Default",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers",
     "UniT.Data.Converters"

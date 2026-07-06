@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Storages.PlayerPrefs.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Storages.PlayerPrefs",
     "UniT.DI.InternalDI"

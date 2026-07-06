@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Storages.PlayerPrefs.Zenject",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Storages.PlayerPrefs",
     "Zenject"

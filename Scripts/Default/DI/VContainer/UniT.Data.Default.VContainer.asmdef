@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Default.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Default",
     "VContainer"

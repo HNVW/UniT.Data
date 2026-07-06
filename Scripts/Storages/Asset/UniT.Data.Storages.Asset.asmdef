@@ -1,5 +1,6 @@
 {
   "name": "UniT.Data.Storages.Asset",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Storages",
     "UniT.ResourceManagement",

@@ -1,9 +1,13 @@
 {
   "name": "UniT.Data.Serializers.Csv",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers",
     "UniT.Data.Converters",
     "UniT.Extensions"
+  ],
+  "precompiledReferences": [
+    "CsvHelper.dll"
   ],
   "versionDefines": [
     {

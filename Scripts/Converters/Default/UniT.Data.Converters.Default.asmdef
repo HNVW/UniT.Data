@@ -1,5 +1,6 @@
 {
   "name": "UniT.Data.Converters.Default",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Converters",
     "UniT.Extensions"

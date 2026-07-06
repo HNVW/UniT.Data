@@ -1,8 +1,13 @@
 {
   "name": "UniT.Data.Serializers.Toml.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Toml",
     "VContainer"
+  ],
+  "precompiledReferences": [
+    "Tomlyn.dll"
   ],
   "versionDefines": [
     {

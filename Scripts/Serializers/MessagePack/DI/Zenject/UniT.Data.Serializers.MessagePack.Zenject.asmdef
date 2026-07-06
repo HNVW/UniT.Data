@@ -1,8 +1,13 @@
 {
   "name": "UniT.Data.Serializers.MessagePack.Zenject",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.MessagePack",
     "Zenject"
+  ],
+  "precompiledReferences": [
+    "MessagePack.dll"
   ],
   "versionDefines": [
     {

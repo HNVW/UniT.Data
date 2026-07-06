@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Storages.File.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Storages.File",
     "VContainer"

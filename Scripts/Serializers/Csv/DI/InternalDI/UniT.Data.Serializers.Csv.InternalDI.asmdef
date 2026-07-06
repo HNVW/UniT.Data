@@ -1,8 +1,13 @@
 {
   "name": "UniT.Data.Serializers.Csv.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Csv",
     "UniT.DI.InternalDI"
+  ],
+  "precompiledReferences": [
+    "CsvHelper.dll"
   ],
   "versionDefines": [
     {

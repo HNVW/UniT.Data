@@ -1,8 +1,13 @@
 {
   "name": "UniT.Data.Serializers.Toml.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Toml",
     "UniT.DI.InternalDI"
+  ],
+  "precompiledReferences": [
+    "Tomlyn.dll"
   ],
   "versionDefines": [
     {

@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Extensions",
     "UniTask"

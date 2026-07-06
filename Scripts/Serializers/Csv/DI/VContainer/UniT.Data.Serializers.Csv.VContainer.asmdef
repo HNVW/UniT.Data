@@ -1,8 +1,13 @@
 {
   "name": "UniT.Data.Serializers.Csv.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Csv",
     "VContainer"
+  ],
+  "precompiledReferences": [
+    "CsvHelper.dll"
   ],
   "versionDefines": [
     {

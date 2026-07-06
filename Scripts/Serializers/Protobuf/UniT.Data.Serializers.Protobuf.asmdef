@@ -1,7 +1,11 @@
 {
   "name": "UniT.Data.Serializers.Protobuf",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers"
+  ],
+  "precompiledReferences": [
+    "Google.Protobuf.dll"
   ],
   "versionDefines": [
     {

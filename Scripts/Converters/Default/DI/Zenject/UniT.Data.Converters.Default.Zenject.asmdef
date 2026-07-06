@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Converters.Default.Zenject",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Converters.Default",
     "Zenject"

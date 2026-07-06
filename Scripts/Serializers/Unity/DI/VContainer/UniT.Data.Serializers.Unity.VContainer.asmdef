@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Serializers.Unity.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Unity",
     "VContainer"

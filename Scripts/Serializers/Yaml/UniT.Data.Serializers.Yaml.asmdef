@@ -1,7 +1,11 @@
 {
   "name": "UniT.Data.Serializers.Yaml",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers"
+  ],
+  "precompiledReferences": [
+    "SharpYaml.dll"
   ],
   "versionDefines": [
     {

@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Storages",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Extensions",
     "UniT.Extensions.UniTask",

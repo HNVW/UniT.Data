@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Serializers.Unity.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Unity",
     "UniT.DI.InternalDI"

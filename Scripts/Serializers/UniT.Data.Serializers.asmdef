@@ -1,3 +1,5 @@
 {
-  "name": "UniT.Data.Serializers"
+  "name": "UniT.Data.Serializers",
+  "overrideReferences": true,
+  "noEngineReferences": true
 }

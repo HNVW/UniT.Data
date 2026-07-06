@@ -1,7 +1,11 @@
 {
   "name": "UniT.Data.Serializers.MemoryPack",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers"
+  ],
+  "precompiledReferences": [
+    "MemoryPack.Core.dll"
   ],
   "versionDefines": [
     {

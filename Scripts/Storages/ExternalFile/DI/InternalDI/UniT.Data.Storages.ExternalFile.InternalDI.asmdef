@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Storages.ExternalFile.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Storages.ExternalFile",
     "UniT.DI.InternalDI"

@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Serializers.Protobuf.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Protobuf",
     "VContainer"

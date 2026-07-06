@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Serializers.Unity.Zenject",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Unity",
     "Zenject"

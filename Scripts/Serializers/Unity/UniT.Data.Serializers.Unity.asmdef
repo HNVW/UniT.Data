@@ -1,5 +1,6 @@
 {
   "name": "UniT.Data.Serializers.Unity",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers"
   ]

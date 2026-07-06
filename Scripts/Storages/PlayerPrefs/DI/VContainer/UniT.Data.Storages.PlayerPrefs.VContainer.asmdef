@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Storages.PlayerPrefs.VContainer",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Storages.PlayerPrefs",
     "VContainer"

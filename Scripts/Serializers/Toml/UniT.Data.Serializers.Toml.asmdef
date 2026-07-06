@@ -1,7 +1,11 @@
 {
   "name": "UniT.Data.Serializers.Toml",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers"
+  ],
+  "precompiledReferences": [
+    "Tomlyn.dll"
   ],
   "versionDefines": [
     {

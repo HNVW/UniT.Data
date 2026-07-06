@@ -1,5 +1,7 @@
 {
   "name": "UniT.Data.Serializers.Protobuf.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
   "references": [
     "UniT.Data.Serializers.Protobuf",
     "UniT.DI.InternalDI"

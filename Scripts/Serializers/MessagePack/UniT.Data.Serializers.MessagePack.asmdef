@@ -1,7 +1,12 @@
 {
   "name": "UniT.Data.Serializers.MessagePack",
+  "overrideReferences": true,
   "references": [
     "UniT.Data.Serializers"
+  ],
+  "precompiledReferences": [
+    "MessagePack.dll",
+    "MessagePack.Annotations.dll"
   ],
   "versionDefines": [
     {
