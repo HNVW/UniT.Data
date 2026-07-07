@@ -38,7 +38,7 @@ namespace UniT.Data.Storages.Asset
             if (type == typeof(string))
             {
                 var asset = await this.assetManager.LoadAsync<TextAsset>(key, progress, cancellationToken);
-                var text  = asset.text;
+                var text = asset.text;
                 this.assetManager.Unload(key);
                 return text;
             }

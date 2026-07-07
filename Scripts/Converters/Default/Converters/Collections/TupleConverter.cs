@@ -22,14 +22,14 @@ namespace UniT.Data.Converters.Default
 
         protected override object ConvertFromString(Type type, string str)
         {
-            var items     = str.Split(this.separator);
+            var items = str.Split(this.separator);
             var itemTypes = type.GetGenericArguments();
             return Activator.CreateInstance(type, IterTools.Zip(itemTypes, items, this.Manager.ConvertFromString).ToArray());
         }
 
         protected override string ConvertToString(Type type, object obj)
         {
-            var tuple     = (ITuple)obj;
+            var tuple = (ITuple)obj;
             var itemTypes = type.GetGenericArguments();
             return IterTools.Zip(itemTypes, ToEnumerable(tuple), this.Manager.ConvertToString).Join(this.separator);
 

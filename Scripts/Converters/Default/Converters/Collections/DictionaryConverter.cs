@@ -32,11 +32,11 @@ namespace UniT.Data.Converters.Default
 
         protected override object ConvertFromString(Type type, string str)
         {
-            var keyType        = type.GetGenericArguments()[0];
-            var valueType      = type.GetGenericArguments()[1];
-            var keyConverter   = this.Manager.GetConverter(keyType);
+            var keyType = type.GetGenericArguments()[0];
+            var valueType = type.GetGenericArguments()[1];
+            var keyConverter = this.Manager.GetConverter(keyType);
             var valueConverter = this.Manager.GetConverter(valueType);
-            var dictionary     = (IDictionary)Activator.CreateInstance(type);
+            var dictionary = (IDictionary)Activator.CreateInstance(type);
             foreach (var item in (string[])this.Manager.ConvertFromString(ArrayType, str))
             {
                 var kv = item.Split(this.separator);
@@ -50,11 +50,11 @@ namespace UniT.Data.Converters.Default
 
         protected override string ConvertToString(Type type, object obj)
         {
-            var keyType        = type.GetGenericArguments()[0];
-            var valueType      = type.GetGenericArguments()[1];
-            var keyConverter   = this.Manager.GetConverter(keyType);
+            var keyType = type.GetGenericArguments()[0];
+            var valueType = type.GetGenericArguments()[1];
+            var keyConverter = this.Manager.GetConverter(keyType);
             var valueConverter = this.Manager.GetConverter(valueType);
-            var dictionary     = (IDictionary)obj;
+            var dictionary = (IDictionary)obj;
             return this.Manager.ConvertToString(
                 ArrayType,
                 IterTools.Zip(

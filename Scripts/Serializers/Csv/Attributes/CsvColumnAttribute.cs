@@ -8,12 +8,12 @@ namespace UniT.Data.Serializers.Csv
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class CsvColumnAttribute : Attribute
     {
-        public string Name         { get; }
-        public bool   IgnorePrefix { get; }
+        public string Name { get; }
+        public bool IgnorePrefix { get; }
 
         public CsvColumnAttribute(string name, bool ignorePrefix = false)
         {
-            this.Name         = name;
+            this.Name = name;
             this.IgnorePrefix = ignorePrefix;
         }
     }

@@ -7,13 +7,13 @@ namespace UniT.Data.Serializers.Csv
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class CsvRowAttribute : Attribute
     {
-        public string  Prefix { get; }
-        public string? Key    { get; }
+        public string Prefix { get; }
+        public string? Key { get; }
 
         public CsvRowAttribute(string prefix, string? key = null)
         {
             this.Prefix = prefix;
-            this.Key    = key;
+            this.Key = key;
         }
     }
 

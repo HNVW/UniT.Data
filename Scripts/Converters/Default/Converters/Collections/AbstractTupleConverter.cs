@@ -34,8 +34,8 @@ namespace UniT.Data.Converters.Default
 
         protected override object ConvertFromString(Type type, string str)
         {
-            var items     = str.Split(this.separator);
-            var itemType  = SupportedTypes[type];
+            var items = str.Split(this.separator);
+            var itemType = SupportedTypes[type];
             var converter = this.Manager.GetConverter(itemType);
             return Activator.CreateInstance(
                 type,
@@ -50,17 +50,17 @@ namespace UniT.Data.Converters.Default
         {
             var items = obj switch
             {
-                Vector2 vector2       => new object[] { vector2.x, vector2.y },
-                Vector3 vector3       => new object[] { vector3.x, vector3.y, vector3.z },
-                Vector4 vector4       => new object[] { vector4.x, vector4.y, vector4.z, vector4.w },
+                Vector2 vector2 => new object[] { vector2.x, vector2.y },
+                Vector3 vector3 => new object[] { vector3.x, vector3.y, vector3.z },
+                Vector4 vector4 => new object[] { vector4.x, vector4.y, vector4.z, vector4.w },
                 Quaternion quaternion => new object[] { quaternion.x, quaternion.y, quaternion.z, quaternion.w },
                 Vector2Int vector2Int => new object[] { vector2Int.x, vector2Int.y },
                 Vector3Int vector3Int => new object[] { vector3Int.x, vector3Int.y, vector3Int.z },
-                Color color           => new object[] { color.r, color.g, color.b, color.a },
-                Color32 color32       => new object[] { color32.r, color32.g, color32.b, color32.a },
-                _                     => throw new NotSupportedException($"Unsupported type: {obj.GetType().Name}"),
+                Color color => new object[] { color.r, color.g, color.b, color.a },
+                Color32 color32 => new object[] { color32.r, color32.g, color32.b, color32.a },
+                _ => throw new NotSupportedException($"Unsupported type: {obj.GetType().Name}"),
             };
-            var itemType  = SupportedTypes[type];
+            var itemType = SupportedTypes[type];
             var converter = this.Manager.GetConverter(itemType);
             return items.Select(item => converter.ConvertToString(itemType, item)).Join(this.separator);
         }

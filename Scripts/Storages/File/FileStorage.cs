@@ -69,7 +69,7 @@ namespace UniT.Data.Storages.File
             this.dirtyKeys.SafeForEach(static (key, dirtyKeys) =>
             {
                 var tempPath = GetTempPath(key);
-                var path     = GetPath(key);
+                var path = GetPath(key);
                 if (File.Exists(path))
                 {
                     File.Replace(tempPath, path, null);

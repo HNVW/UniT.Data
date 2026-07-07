@@ -17,8 +17,8 @@ namespace UniT.Data.Default
         #region Constructor
 
         private readonly IReadOnlyList<ISerializer> serializers;
-        private readonly IReadOnlyList<IStorage>    storages;
-        private readonly ILogger                    logger;
+        private readonly IReadOnlyList<IStorage> storages;
+        private readonly ILogger logger;
 
         private readonly Dictionary<Type, IReadOnlyList<(ISerializer, IStorage)>> serializerAndStorageCache = new();
 
@@ -26,8 +26,8 @@ namespace UniT.Data.Default
         public DataManager(IReadOnlyList<ISerializer> serializers, IReadOnlyList<IStorage> storages, ILoggerManager loggerManager)
         {
             this.serializers = serializers;
-            this.storages    = storages;
-            this.logger      = loggerManager.GetLogger(this);
+            this.storages = storages;
+            this.logger = loggerManager.GetLogger(this);
             this.logger.Debug("Constructed");
         }
 
@@ -40,11 +40,11 @@ namespace UniT.Data.Default
                 if (storage is not IReadableStorage readableStorage) continue;
                 if (!await readableStorage.ContainsAsync(key, cancellationToken: cancellationToken)) continue;
                 var rawData = await readableStorage.ReadAsync(key, serializer.RawDataType, progress, cancellationToken);
-                #if !UNITY_WEBGL
+#if !UNITY_WEBGL
                 var savedData = await UniTask.RunOnThreadPool(() => serializer.Deserialize(type, rawData), cancellationToken: cancellationToken);
-                #else
+#else
                 var savedData = serializer.Deserialize(type, rawData);
-                #endif
+#endif
                 this.logger.Debug($"Loaded {key} - {serializer.GetType().Name} - {storage.GetType().Name}");
                 return savedData;
             }
@@ -83,7 +83,7 @@ namespace UniT.Data.Default
                 {
                     var result = IterTools.Product(
                             state.@this.serializers.Where(static (serializer, type) => serializer.CanSerialize(type), state.type),
-                            state.@this.storages.Where(static (storage,       type) => typeof(IWritableData).IsAssignableFrom(type) == storage is IWritableStorage, state.type)
+                            state.@this.storages.Where(static (storage, type) => typeof(IWritableData).IsAssignableFrom(type) == storage is IWritableStorage, state.type)
                         )
                         .Where(static (serializer, storage) => storage.CanStore(serializer.RawDataType))
                         .Reverse()

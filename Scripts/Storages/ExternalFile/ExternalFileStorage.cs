@@ -14,20 +14,20 @@ namespace UniT.Data.Storages.ExternalFile
     using UniT.ResourceManagement;
     using UnityEngine;
     using UnityEngine.Scripting;
-    using ILogger = UniT.Logging.ILogger;
+    using ILogger = Logging.ILogger;
 
     public sealed class ExternalFileStorage : IReadableStorage
     {
         private readonly IExternalFileVersionProvider provider;
-        private readonly IExternalAssetManager        externalAssetManager;
-        private readonly ILogger                      logger;
+        private readonly IExternalAssetManager externalAssetManager;
+        private readonly ILogger logger;
 
         [Preserve]
         public ExternalFileStorage(IExternalFileVersionProvider provider, IExternalAssetManager externalAssetManager, ILoggerManager loggerManager)
         {
-            this.provider             = provider;
+            this.provider = provider;
             this.externalAssetManager = externalAssetManager;
-            this.logger               = loggerManager.GetLogger(this);
+            this.logger = loggerManager.GetLogger(this);
         }
 
         bool IStorage.CanStore(Type type) => type == typeof(byte[]) || type == typeof(string);
@@ -69,15 +69,15 @@ namespace UniT.Data.Storages.ExternalFile
             }
         }
 
-        private static string ZipFilePath      => Path.Combine(PersistentDataPath, Version);
+        private static string ZipFilePath => Path.Combine(PersistentDataPath, Version);
         private static string ExtractDirectory => Path.Combine(TemporaryCachePath, Version);
 
-        private bool  validating;
+        private bool validating;
         private bool? validateResult;
 
         private async UniTask<string?> GetFilePathAsync(string name, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            if (this.validating) await UniTask.WaitUntil(this, @this => !@this.validating, cancellationToken: cancellationToken);
+            if (this.validating) await UniTask.WaitUntil(this, static @this => !@this.validating, cancellationToken: cancellationToken);
             if (this.validateResult is not null) return this.GetFilePath(name);
             this.validating = true;
             try
@@ -157,11 +157,11 @@ namespace UniT.Data.Storages.ExternalFile
 
         private UniTask<bool> ValidateAndExtractAsync(CancellationToken cancellationToken)
         {
-            #if !UNITY_WEBGL
+#if !UNITY_WEBGL
             return UniTask.RunOnThreadPool(ValidateAndExtract, cancellationToken: cancellationToken);
-            #else
+#else
             return UniTask.FromResult(ValidateAndExtract());
-            #endif
+#endif
 
             bool ValidateAndExtract()
             {
@@ -198,7 +198,7 @@ namespace UniT.Data.Storages.ExternalFile
 
                 static string ComputeHash(string filePath)
                 {
-                    using var sha256  = SHA256.Create();
+                    using var sha256 = SHA256.Create();
                     using var zipFile = File.OpenRead(filePath);
                     return BitConverter.ToString(sha256.ComputeHash(zipFile)).Replace("-", string.Empty);
                 }

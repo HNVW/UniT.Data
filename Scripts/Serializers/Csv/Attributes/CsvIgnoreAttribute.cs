@@ -22,8 +22,8 @@ namespace UniT.Data.Serializers.Csv
         public static (List<FieldInfo> NormalFields, List<FieldInfo> NestedFields) GetCsvFields(this Type type)
         {
             return type.GetAllFields()
-                .Where(field => !field.IsCsvIgnored())
-                .Split(field => !typeof(ICsvData).IsAssignableFrom(field.FieldType));
+                .Where(static field => !field.IsCsvIgnored())
+                .Split(static field => !typeof(ICsvData).IsAssignableFrom(field.FieldType));
         }
     }
 }

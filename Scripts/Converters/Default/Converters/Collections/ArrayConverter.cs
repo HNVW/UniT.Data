@@ -25,10 +25,10 @@ namespace UniT.Data.Converters.Default
 
         protected override object ConvertFromString(Type type, string str)
         {
-            var elementType      = type.GetElementType()!;
+            var elementType = type.GetElementType()!;
             var elementConverter = this.Manager.GetConverter(elementType);
-            var elements         = str.Split(this.separator);
-            var array            = Array.CreateInstance(elementType, elements.Length);
+            var elements = str.Split(this.separator);
+            var array = Array.CreateInstance(elementType, elements.Length);
             for (var i = 0; i < elements.Length; ++i)
             {
                 array.SetValue(elementConverter.ConvertFromString(elementType, elements[i]), i);
@@ -38,7 +38,7 @@ namespace UniT.Data.Converters.Default
 
         protected override string ConvertToString(Type type, object obj)
         {
-            var elementType      = type.GetElementType()!;
+            var elementType = type.GetElementType()!;
             var elementConverter = this.Manager.GetConverter(elementType);
             return ((Array)obj).Cast<object>()
                 .Select(static (element, state) => state.elementConverter.ConvertToString(state.elementType, element), (elementConverter, elementType))

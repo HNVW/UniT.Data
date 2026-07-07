@@ -11,8 +11,8 @@ namespace UniT.Data.Serializers.Csv.DI
         {
             container.BindCsvSerializer(new(CultureInfo.InvariantCulture)
             {
-                MissingFieldFound     = null,
-                PrepareHeaderForMatch = args => args.Header.ToLowerInvariant(),
+                MissingFieldFound = null,
+                PrepareHeaderForMatch = static args => args.Header.ToLowerInvariant(),
             });
         }
 
