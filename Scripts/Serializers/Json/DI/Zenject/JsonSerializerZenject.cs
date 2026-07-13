@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Json.DI
+namespace UniT.Data.Serializers.DI
 {
     using System.Collections.Generic;
     using System.Globalization;

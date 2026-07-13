@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Toml
+namespace UniT.Data.Serializers
 {
     using System;
     using Tomlyn;

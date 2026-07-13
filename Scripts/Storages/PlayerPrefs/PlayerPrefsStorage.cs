@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Storages.PlayerPrefs
+namespace UniT.Data.Storages
 {
     using System;
     using System.Threading;

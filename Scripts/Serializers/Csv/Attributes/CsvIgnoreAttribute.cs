@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Csv
+namespace UniT.Data.Serializers
 {
     using System;
     using System.Collections.Generic;

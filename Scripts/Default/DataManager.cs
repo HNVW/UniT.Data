@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Default
+namespace UniT.Data
 {
     using System;
     using System.Collections.Generic;

@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Unity.DI
+namespace UniT.Data.Serializers.DI
 {
     using VContainer;
 

@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Default
+namespace UniT.Data.Serializers
 {
     using System;
     using Converters;

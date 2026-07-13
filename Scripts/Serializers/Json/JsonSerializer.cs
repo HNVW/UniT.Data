@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Json
+namespace UniT.Data.Serializers
 {
     using System;
     using Newtonsoft.Json;

@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Toml.DI
+namespace UniT.Data.Serializers.DI
 {
     using InternalDI;
     using Tomlyn;

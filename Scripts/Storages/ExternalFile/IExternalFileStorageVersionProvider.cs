@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Storages.ExternalFile
+namespace UniT.Data.Storages
 {
     using System;
     using System.Threading;

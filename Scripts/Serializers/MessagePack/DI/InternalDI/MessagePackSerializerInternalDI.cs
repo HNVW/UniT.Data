@@ -1,8 +1,8 @@
 #nullable enable
-namespace UniT.Data.Serializers.MessagePack.DI
+namespace UniT.Data.Serializers.DI
 {
-    using global::MessagePack;
     using InternalDI;
+    using MessagePack;
     using MessagePackSerializer = MessagePackSerializer;
 
     public static class MessagePackSerializerInternalDI

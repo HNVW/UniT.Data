@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Storages.PlayerPrefs.DI
+namespace UniT.Data.Storages.DI
 {
     using VContainer;
 

@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Converters.Default
+namespace UniT.Data.Converters
 {
     using System;
     using UnityEngine.Scripting;

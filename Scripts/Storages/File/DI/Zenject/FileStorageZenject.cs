@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Storages.File.DI
+namespace UniT.Data.Storages.DI
 {
     using Zenject;
 

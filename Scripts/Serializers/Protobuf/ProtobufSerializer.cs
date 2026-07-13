@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Protobuf
+namespace UniT.Data.Serializers
 {
     using System;
     using Google.Protobuf;

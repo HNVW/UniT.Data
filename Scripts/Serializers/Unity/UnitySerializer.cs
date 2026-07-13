@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Unity
+namespace UniT.Data.Serializers
 {
     using System;
     using UnityEngine.Scripting;

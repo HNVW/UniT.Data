@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Default.DI
+namespace UniT.Data.DI
 {
     using InternalDI;
 

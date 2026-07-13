@@ -1,7 +1,7 @@
 #nullable enable
-namespace UniT.Data.Serializers.MemoryPack.DI
+namespace UniT.Data.Serializers.DI
 {
-    using global::MemoryPack;
+    using MemoryPack;
     using Zenject;
     using MemoryPackSerializer = MemoryPackSerializer;
 

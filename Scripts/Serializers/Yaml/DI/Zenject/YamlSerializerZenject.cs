@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.Yaml.DI
+namespace UniT.Data.Serializers.DI
 {
     using SharpYaml;
     using Zenject;

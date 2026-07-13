@@ -1,11 +1,11 @@
 #nullable enable
-namespace UniT.Data.Serializers.MemoryPack
+namespace UniT.Data.Serializers
 {
     using System;
     using System.Reflection;
-    using global::MemoryPack;
+    using MemoryPack;
     using UnityEngine.Scripting;
-    using BaseSerializer = global::MemoryPack.MemoryPackSerializer;
+    using BaseSerializer = MemoryPack.MemoryPackSerializer;
 
     public sealed class MemoryPackSerializer : Serializer<byte[], object>
     {
