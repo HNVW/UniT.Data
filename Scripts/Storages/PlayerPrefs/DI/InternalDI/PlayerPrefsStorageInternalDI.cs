@@ -1,7 +1,7 @@
 #nullable enable
 namespace UniT.Data.Storages.PlayerPrefs.DI
 {
-    using UniT.DI;
+    using InternalDI;
 
     public static class PlayerPrefsStorageInternalDI
     {

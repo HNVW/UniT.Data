@@ -7,10 +7,10 @@ namespace UniT.Data.Serializers.Csv
     using System.IO;
     using System.Linq;
     using System.Reflection;
+    using Converters;
     using CsvHelper;
     using CsvHelper.Configuration;
-    using UniT.Data.Converters;
-    using UniT.Extensions;
+    using Extensions;
     using UnityEngine.Scripting;
 
     public sealed class CsvSerializer : Serializer<string, ICsvData>

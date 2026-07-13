@@ -7,7 +7,7 @@ namespace UniT.Data.Storages.File
     using System.Runtime.CompilerServices;
     using System.Threading;
     using Cysharp.Threading.Tasks;
-    using UniT.Extensions;
+    using Extensions;
     using UnityEngine;
     using UnityEngine.Scripting;
 

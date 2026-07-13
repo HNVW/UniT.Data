@@ -1,8 +1,8 @@
 #nullable enable
 namespace UniT.Data.Serializers.Toml.DI
 {
+    using InternalDI;
     using Tomlyn;
-    using UniT.DI;
     using TomlSerializer = TomlSerializer;
 
     public static class TomlSerializerInternalDI

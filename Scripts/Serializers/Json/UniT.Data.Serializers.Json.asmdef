@@ -1,0 +1,21 @@
+{
+  "name": "UniT.Data.Serializers.Json",
+  "overrideReferences": true,
+  "references": [
+    "UniT.Data.Serializers",
+    "UniT.Extensions"
+  ],
+  "precompiledReferences": [
+    "Newtonsoft.Json.dll"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.unity.nuget.newtonsoft-json",
+      "expression": "",
+      "define": "UNIT_JSON"
+    }
+  ],
+  "defineConstraints": [
+    "UNIT_JSON"
+  ]
+}

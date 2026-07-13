@@ -5,7 +5,7 @@ namespace UniT.Data.Storages.ExternalFile
     using System.Threading;
     using Cysharp.Threading.Tasks;
 
-    public interface IExternalFileVersionProvider
+    public interface IExternalFileStorageVersionProvider
     {
         public UniTask<(string Version, string DownloadUrl)> FetchVersionAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default);
     }

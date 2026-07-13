@@ -2,7 +2,7 @@
 namespace UniT.Data.Serializers.MemoryPack.DI
 {
     using global::MemoryPack;
-    using UniT.DI;
+    using InternalDI;
     using MemoryPackSerializer = MemoryPackSerializer;
 
     public static class MemoryPackSerializerInternalDI

@@ -1,7 +1,7 @@
 #nullable enable
 namespace UniT.Data.Storages.File.DI
 {
-    using UniT.DI;
+    using InternalDI;
 
     public static class FileStorageInternalDI
     {

@@ -1,9 +1,9 @@
 #nullable enable
 namespace UniT.Data.Default.DI
 {
-    using UniT.DI;
+    using InternalDI;
 
-    public static class DataManagerDI
+    public static class DataManagerInternalDI
     {
         public static void AddDataManager(this DependencyContainer container)
         {

@@ -5,7 +5,7 @@ namespace UniT.Data.Converters.Default
     using System.Collections.Generic;
     using System.Linq;
     using System.Runtime.CompilerServices;
-    using UniT.Extensions;
+    using Extensions;
     using UnityEngine.Scripting;
 
     public sealed class TupleConverter : Converter

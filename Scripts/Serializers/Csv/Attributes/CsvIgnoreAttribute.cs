@@ -5,7 +5,7 @@ namespace UniT.Data.Serializers.Csv
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using UniT.Extensions;
+    using Extensions;
 
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class CsvIgnoreAttribute : Attribute

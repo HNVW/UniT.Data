@@ -1,8 +1,8 @@
 #nullable enable
 namespace UniT.Data.Serializers.Yaml.DI
 {
+    using InternalDI;
     using SharpYaml;
-    using UniT.DI;
     using YamlSerializer = YamlSerializer;
 
     public static class YamlSerializerInternalDI

@@ -4,7 +4,7 @@ namespace UniT.Data.Storages.Asset
     using System;
     using System.Threading;
     using Cysharp.Threading.Tasks;
-    using UniT.ResourceManagement;
+    using ResourceManagement;
     using UnityEngine;
     using UnityEngine.Scripting;
     using Object = UnityEngine.Object;

@@ -6,10 +6,10 @@ namespace UniT.Data.Default
     using System.Linq;
     using System.Threading;
     using Cysharp.Threading.Tasks;
-    using UniT.Data.Serializers;
-    using UniT.Data.Storages;
-    using UniT.Extensions;
-    using UniT.Logging;
+    using Extensions;
+    using Logging;
+    using Serializers;
+    using Storages;
     using UnityEngine.Scripting;
 
     public sealed class DataManager : IDataManager

@@ -1,0 +1,28 @@
+{
+  "name": "UniT.Data.Serializers.Json.InternalDI",
+  "overrideReferences": true,
+  "noEngineReferences": true,
+  "references": [
+    "UniT.Data.Serializers.Json",
+    "UniT.DI.InternalDI"
+  ],
+  "precompiledReferences": [
+    "Newtonsoft.Json.dll"
+  ],
+  "versionDefines": [
+    {
+      "name": "com.unity.nuget.newtonsoft-json",
+      "expression": "",
+      "define": "UNIT_JSON"
+    },
+    {
+      "name": "com.frostbun.unit.di",
+      "expression": "",
+      "define": "UNIT_INTERNALDI"
+    }
+  ],
+  "defineConstraints": [
+    "UNIT_JSON",
+    "UNIT_INTERNALDI"
+  ]
+}

@@ -3,7 +3,7 @@ namespace UniT.Data.Converters.Default.DI
 {
     using System;
     using System.Globalization;
-    using UniT.DI;
+    using InternalDI;
     using JsonConverter = JsonConverter;
 
     public static class ConverterManagerInternalDI

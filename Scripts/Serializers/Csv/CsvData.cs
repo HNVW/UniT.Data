@@ -4,7 +4,7 @@ namespace UniT.Data.Serializers.Csv
     using System;
     using System.Collections;
     using System.Collections.Generic;
-    using UniT.Extensions;
+    using Extensions;
     using UnityEngine.Scripting;
 
     public abstract record CsvRecordData : ICsvData

@@ -1,7 +1,7 @@
 #nullable enable
 namespace UniT.Data.Storages.Asset.DI
 {
-    using UniT.DI;
+    using InternalDI;
 
     public static class AssetStorageInternalDI
     {

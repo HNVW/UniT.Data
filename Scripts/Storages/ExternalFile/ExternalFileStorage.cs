@@ -9,23 +9,23 @@ namespace UniT.Data.Storages.ExternalFile
     using System.Security.Cryptography;
     using System.Threading;
     using Cysharp.Threading.Tasks;
-    using UniT.Extensions;
-    using UniT.Logging;
-    using UniT.ResourceManagement;
+    using Extensions;
+    using Logging;
+    using ResourceManagement;
     using UnityEngine;
     using UnityEngine.Scripting;
     using ILogger = Logging.ILogger;
 
     public sealed class ExternalFileStorage : IReadableStorage
     {
-        private readonly IExternalFileVersionProvider provider;
+        private readonly IExternalFileStorageVersionProvider versionProvider;
         private readonly IExternalAssetManager externalAssetManager;
         private readonly ILogger logger;
 
         [Preserve]
-        public ExternalFileStorage(IExternalFileVersionProvider provider, IExternalAssetManager externalAssetManager, ILoggerManager loggerManager)
+        public ExternalFileStorage(IExternalFileStorageVersionProvider versionProvider, IExternalAssetManager externalAssetManager, ILoggerManager loggerManager)
         {
-            this.provider = provider;
+            this.versionProvider = versionProvider;
             this.externalAssetManager = externalAssetManager;
             this.logger = loggerManager.GetLogger(this);
         }
@@ -121,7 +121,7 @@ namespace UniT.Data.Storages.ExternalFile
             try
             {
                 this.logger.Debug("Fetching version");
-                var result = await this.provider.FetchVersionAsync(progress, cancellationToken);
+                var result = await this.versionProvider.FetchVersionAsync(progress, cancellationToken);
                 this.logger.Debug($"Got: {result}");
                 return result;
             }

@@ -31,7 +31,7 @@ namespace UniT.Data.Serializers.MessagePack
 
         public override T Deserialize<T>(byte[] rawData)
         {
-            return BaseSerializer.Deserialize<T>(rawData, this.options)!;
+            return BaseSerializer.Deserialize<T>(rawData, this.options);
         }
 
         public override byte[] Serialize<T>(T data)

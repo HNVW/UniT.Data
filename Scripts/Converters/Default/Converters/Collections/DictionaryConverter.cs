@@ -5,7 +5,7 @@ namespace UniT.Data.Converters.Default
     using System.Collections;
     using System.Collections.Generic;
     using System.Linq;
-    using UniT.Extensions;
+    using Extensions;
     using UnityEngine.Scripting;
 
     /// <summary>

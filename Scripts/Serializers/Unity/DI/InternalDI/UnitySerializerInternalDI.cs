@@ -1,7 +1,7 @@
 #nullable enable
 namespace UniT.Data.Serializers.Unity.DI
 {
-    using UniT.DI;
+    using InternalDI;
 
     public static class UnitySerializerInternalDI
     {

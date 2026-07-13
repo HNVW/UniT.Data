@@ -2,7 +2,7 @@
 namespace UniT.Data.Serializers.MessagePack.DI
 {
     using global::MessagePack;
-    using UniT.DI;
+    using InternalDI;
     using MessagePackSerializer = MessagePackSerializer;
 
     public static class MessagePackSerializerInternalDI

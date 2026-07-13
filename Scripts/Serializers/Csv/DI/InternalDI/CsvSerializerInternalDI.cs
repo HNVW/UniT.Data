@@ -3,7 +3,7 @@ namespace UniT.Data.Serializers.Csv.DI
 {
     using System.Globalization;
     using CsvHelper.Configuration;
-    using UniT.DI;
+    using InternalDI;
 
     public static class CsvSerializerInternalDI
     {

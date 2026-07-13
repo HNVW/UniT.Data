@@ -3,7 +3,7 @@ namespace UniT.Data.Serializers.Csv
 {
     using System;
     using System.Reflection;
-    using UniT.Extensions;
+    using Extensions;
 
     [AttributeUsage(AttributeTargets.Field)]
     public sealed class CsvColumnAttribute : Attribute
