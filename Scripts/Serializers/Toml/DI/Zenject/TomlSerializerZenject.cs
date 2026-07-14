@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.DI
+namespace UniT.Data.DI
 {
     using Tomlyn;
     using Zenject;

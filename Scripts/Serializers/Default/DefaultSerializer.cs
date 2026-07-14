@@ -1,8 +1,7 @@
 #nullable enable
-namespace UniT.Data.Serializers
+namespace UniT.Data
 {
     using System;
-    using Converters;
     using UnityEngine.Scripting;
 
     public sealed class DefaultSerializer : Serializer<string, object>

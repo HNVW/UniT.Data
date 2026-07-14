@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Converters
+namespace UniT.Data
 {
     public sealed class SeparatorConfig
     {

@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers
+namespace UniT.Data
 {
     using System;
     using System.Diagnostics.Contracts;

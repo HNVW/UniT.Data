@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Serializers.DI
+namespace UniT.Data.DI
 {
     using System.Globalization;
     using CsvHelper.Configuration;

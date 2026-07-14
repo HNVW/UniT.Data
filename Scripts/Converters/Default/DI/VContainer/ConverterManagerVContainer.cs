@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Converters.DI
+namespace UniT.Data.DI
 {
     using System;
     using System.Globalization;

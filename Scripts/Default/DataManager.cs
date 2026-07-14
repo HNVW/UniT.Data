@@ -8,8 +8,6 @@ namespace UniT.Data
     using Cysharp.Threading.Tasks;
     using Extensions;
     using Logging;
-    using Serializers;
-    using Storages;
     using UnityEngine.Scripting;
 
     public sealed class DataManager : IDataManager

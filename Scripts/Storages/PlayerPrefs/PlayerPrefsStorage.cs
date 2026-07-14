@@ -1,5 +1,5 @@
 #nullable enable
-namespace UniT.Data.Storages
+namespace UniT.Data
 {
     using System;
     using System.Threading;
