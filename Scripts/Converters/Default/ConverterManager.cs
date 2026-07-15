@@ -23,13 +23,11 @@ namespace UniT.Data
 
         IConverter IConverterManager.GetConverter(Type type)
         {
-            if (!this.converterCache.ContainsKey(type))
-            {
-                var converter = this.converters.LastOrDefault(converter => converter.CanConvert(type))
-                    ?? throw new KeyNotFoundException($"No converter found for {type.Name}");
-                this.converterCache.TryAdd(type, converter);
-            }
-            return this.converterCache[type];
+            if (this.converterCache.TryGetValue(type, out var converter)) return converter;
+            converter = this.converters.LastOrDefault(converter => converter.CanConvert(type))
+                ?? throw new KeyNotFoundException($"No converter found for {type.Name}");
+            this.converterCache.TryAdd(type, converter);
+            return converter;
         }
     }
 }
