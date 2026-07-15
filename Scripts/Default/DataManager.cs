@@ -18,6 +18,7 @@ namespace UniT.Data
         private readonly IReadOnlyList<IStorage> storages;
         private readonly ILogger logger;
 
+        private readonly Dictionary<string, object> cache = new();
         private readonly Dictionary<Type, IReadOnlyList<(ISerializer, IStorage)>> serializerAndStorageCache = new();
 
         [Preserve]
@@ -31,37 +32,51 @@ namespace UniT.Data
 
         #endregion
 
-        async UniTask<object> IDataManager.LoadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        UniTask<object> IDataManager.LoadAsync(string key, Type type, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            foreach (var (serializer, storage) in this.GetSerializerAndStorage(type))
+            return cache
+                ? this.cache.GetOrAddAsync(key, LoadAsync)
+                : LoadAsync();
+
+            async UniTask<object> LoadAsync()
             {
-                if (storage is not IReadableStorage readableStorage) continue;
-                if (!await readableStorage.ContainsAsync(key, cancellationToken: cancellationToken)) continue;
-                try
+                foreach (var (serializer, storage) in this.GetSerializerAndStorage(type))
                 {
-                    var rawData = await readableStorage.ReadAsync(key, serializer.RawDataType, progress, cancellationToken);
-                    var savedData = await serializer.DeserializeAsync(type, rawData, cancellationToken);
-                    this.logger.Debug($"Loaded {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
-                    return savedData;
+                    if (storage is not IReadableStorage readableStorage) continue;
+                    if (!await readableStorage.ContainsAsync(key, cancellationToken: cancellationToken)) continue;
+                    try
+                    {
+                        var rawData = await readableStorage.ReadAsync(key, serializer.RawDataType, progress, cancellationToken);
+                        var savedData = await serializer.DeserializeAsync(type, rawData, cancellationToken);
+                        this.logger.Debug($"Loaded {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
+                        return savedData;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new InvalidOperationException($"Failed to load {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
+                    }
                 }
-                catch (Exception e)
-                {
-                    throw new InvalidOperationException($"Failed to load {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
-                }
+                var newData = type.GetEmptyConstructor()();
+                this.logger.Debug($"Instantiated {key}");
+                return newData;
             }
-            var newData = type.GetEmptyConstructor()();
-            this.logger.Debug($"Instantiated {key}");
-            return newData;
         }
 
-        async UniTask IDataManager.SaveAsync(string key, object data, IProgress<float>? progress, CancellationToken cancellationToken)
+        void IDataManager.Update(string key, object data)
         {
-            foreach (var (serializer, storage) in this.GetSerializerAndStorage(data.GetType()))
+            this.cache[key] = data;
+        }
+
+        async UniTask IDataManager.SaveAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            var data = this.cache[key];
+            var type = data.GetType();
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(type))
             {
                 if (storage is not IWritableStorage writableStorage) continue;
                 try
                 {
-                    var rawData = await serializer.SerializeAsync(data.GetType(), data, cancellationToken);
+                    var rawData = await serializer.SerializeAsync(type, data, cancellationToken);
                     await writableStorage.WriteAsync(key, rawData, serializer.RawDataType, progress, cancellationToken);
                     this.logger.Debug($"Saved {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
                     return;
