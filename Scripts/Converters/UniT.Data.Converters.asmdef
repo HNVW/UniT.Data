@@ -1,5 +1,8 @@
 {
   "name": "UniT.Data.Converters",
   "overrideReferences": true,
-  "noEngineReferences": true
+  "noEngineReferences": true,
+  "references": [
+    "UniT.Extensions"
+  ]
 }

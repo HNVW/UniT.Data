@@ -4,6 +4,7 @@ namespace UniT.Data
     using System;
     using System.Threading;
     using Cysharp.Threading.Tasks;
+    using Extensions;
 
     public abstract class Serializer<TRawData, TData> : ISerializer where TRawData : notnull where TData : notnull
     {
@@ -19,7 +20,7 @@ namespace UniT.Data
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException($"Failed to deserialize '{rawData}' to '{type.Name}' with '{this.GetType().Name}' - {e.Message}");
+                throw new InvalidOperationException($"Failed to deserialize '{rawData.ToString().Truncate(64)}' to '{type.Name}' with '{this.GetType().Name}' - {e.Message}");
             }
         }
 

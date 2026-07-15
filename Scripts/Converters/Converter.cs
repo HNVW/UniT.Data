@@ -2,6 +2,7 @@
 namespace UniT.Data
 {
     using System;
+    using Extensions;
 
     public abstract class Converter : IConverter
     {
@@ -19,7 +20,7 @@ namespace UniT.Data
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException($"Failed to convert '{str}' to '{type.Name}' with '{this.GetType().Name}' - {e.Message}");
+                throw new InvalidOperationException($"Failed to convert '{str.Truncate(64)}' to '{type.Name}' with '{this.GetType().Name}' - {e.Message}");
             }
         }
 
