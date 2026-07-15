@@ -26,13 +26,15 @@ namespace UniT.Data
 
         public UniTask<object> LoadAsync(Type type, bool cache = true, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(type.GetKey(), type, cache, progress, cancellationToken);
 
+        public UniTask SaveAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(type.GetKey(), progress, cancellationToken);
+
         public void Update(object data) => this.Update(data.GetType().GetKey(), data);
 
-        public UniTask<T> LoadAsync<T>(bool cache = true, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync(typeof(T).GetKey(), typeof(T), cache, progress, cancellationToken).ContinueWith(static data => (T)data);
+        public void Unload(Type type) => this.Unload(type.GetKey());
+
+        public UniTask<T> LoadAsync<T>(bool cache = true, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync<T>(typeof(T).GetKey(), cache, progress, cancellationToken);
 
         public UniTask SaveAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.SaveAsync(typeof(T).GetKey(), progress, cancellationToken);
-
-        public void Update<T>(T data) where T : notnull => this.Update(typeof(T).GetKey(), data);
 
         public void Unload<T>() where T : notnull => this.Unload(typeof(T).GetKey());
 
