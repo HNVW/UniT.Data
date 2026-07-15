@@ -17,6 +17,12 @@ namespace UniT.Data.DI
             container.BindInterfacesTo<ConverterManager>().AsSingle();
         }
 
+        public static void BindConverterManager(this DiContainer container, SeparatorConfig separatorConfig, IFormatProvider formatProvider)
+        {
+            container.BindDefaultConverters(separatorConfig, formatProvider);
+            container.BindInterfacesTo<ConverterManager>().AsSingle();
+        }
+
         public static void BindDefaultConverters(this DiContainer container)
         {
             container.BindDefaultConverters(

@@ -14,6 +14,8 @@ namespace UniT.Data
             this.converterManager = converterManager;
         }
 
+        protected override bool CanSerialize(Type type) => true;
+
         public override object Deserialize(Type type, string rawData)
         {
             return this.converterManager.ConvertFromString(type, rawData);

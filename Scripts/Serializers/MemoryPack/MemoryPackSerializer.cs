@@ -17,7 +17,7 @@ namespace UniT.Data
             this.options = options;
         }
 
-        protected override bool CanSerialize(Type type) => base.CanSerialize(type) && type.GetCustomAttribute<MemoryPackableAttribute>() is not null;
+        protected override bool CanSerialize(Type type) => type.GetCustomAttribute<MemoryPackableAttribute>() is not null;
 
         public override object Deserialize(Type type, byte[] rawData)
         {

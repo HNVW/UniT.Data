@@ -16,12 +16,12 @@ namespace UniT.Data
 
         bool IStorage.CanStore(Type type) => type == typeof(byte[]) || type == typeof(string);
 
-        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             return UniTask.FromResult(PlayerPrefs.HasKey(key));
         }
 
-        public UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        public UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             if (type == typeof(byte[]))
             {
@@ -34,7 +34,7 @@ namespace UniT.Data
             throw new NotSupportedException($"Unsupported type: {type.Name}");
         }
 
-        public UniTask WriteAsync(string key, object value, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        public UniTask WriteAsync(string key, object value, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             switch (value)
             {

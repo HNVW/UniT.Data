@@ -21,12 +21,12 @@ namespace UniT.Data
 
         bool IStorage.CanStore(Type type) => type == typeof(byte[]) || type == typeof(string) || type == typeof(Object);
 
-        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             return this.assetManager.ContainsAsync(key, progress, cancellationToken);
         }
 
-        public async UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        public async UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             if (type == typeof(byte[]))
             {

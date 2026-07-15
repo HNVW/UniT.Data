@@ -15,6 +15,8 @@ namespace UniT.Data
             this.settings = settings;
         }
 
+        protected override bool CanSerialize(Type type) => true;
+
         public override object Deserialize(Type type, string rawData)
         {
             return JsonConvert.DeserializeObject(rawData, type, this.settings)!;

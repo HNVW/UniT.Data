@@ -37,14 +37,17 @@ namespace UniT.Data
             {
                 if (storage is not IReadableStorage readableStorage) continue;
                 if (!await readableStorage.ContainsAsync(key, cancellationToken: cancellationToken)) continue;
-                var rawData = await readableStorage.ReadAsync(key, serializer.RawDataType, progress, cancellationToken);
-#if !UNITY_WEBGL
-                var savedData = await UniTask.RunOnThreadPool(() => serializer.Deserialize(type, rawData), cancellationToken: cancellationToken);
-#else
-                var savedData = serializer.Deserialize(type, rawData);
-#endif
-                this.logger.Debug($"Loaded {key} - {serializer.GetType().Name} - {storage.GetType().Name}");
-                return savedData;
+                try
+                {
+                    var rawData = await readableStorage.ReadAsync(key, serializer.RawDataType, progress, cancellationToken);
+                    var savedData = await serializer.DeserializeAsync(type, rawData, cancellationToken);
+                    this.logger.Debug($"Loaded {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
+                    return savedData;
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException($"Failed to load {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
+                }
             }
             var newData = type.GetEmptyConstructor()();
             this.logger.Debug($"Instantiated {key}");
@@ -56,10 +59,17 @@ namespace UniT.Data
             foreach (var (serializer, storage) in this.GetSerializerAndStorage(data.GetType()))
             {
                 if (storage is not IWritableStorage writableStorage) continue;
-                var rawData = serializer.Serialize(data.GetType(), data);
-                await writableStorage.WriteAsync(key, rawData, serializer.RawDataType, progress, cancellationToken);
-                this.logger.Debug($"Saved {key} - {serializer.GetType().Name} - {storage.GetType().Name}");
-                return;
+                try
+                {
+                    var rawData = await serializer.SerializeAsync(data.GetType(), data, cancellationToken);
+                    await writableStorage.WriteAsync(key, rawData, serializer.RawDataType, progress, cancellationToken);
+                    this.logger.Debug($"Saved {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
+                    return;
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException($"Failed to save {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
+                }
             }
             throw new InvalidOperationException($"No writable storage found for {key}");
         }

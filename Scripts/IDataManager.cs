@@ -2,7 +2,6 @@
 namespace UniT.Data
 {
     using System;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using Cysharp.Threading.Tasks;
     using Extensions;
@@ -15,18 +14,14 @@ namespace UniT.Data
 
         public void Flush();
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync(key, typeof(T), progress, cancellationToken).ContinueWith(static data => (T)data);
 
         #region Implicit Key
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public UniTask<object> LoadAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(type.GetKey(), type, progress, cancellationToken);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public UniTask SaveAsync(object data, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(data.GetType().GetKey(), data, progress, cancellationToken);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public UniTask<T> LoadAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync(typeof(T).GetKey(), typeof(T), progress, cancellationToken).ContinueWith(static data => (T)data);
 
         #endregion

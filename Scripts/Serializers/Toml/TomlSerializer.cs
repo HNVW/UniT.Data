@@ -16,6 +16,8 @@ namespace UniT.Data
             this.options = options;
         }
 
+        protected override bool CanSerialize(Type type) => true;
+
         public override object Deserialize(Type type, string rawData)
         {
             return BaseSerializer.Deserialize(rawData, type, this.options)!;

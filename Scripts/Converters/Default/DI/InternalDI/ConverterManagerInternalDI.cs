@@ -17,6 +17,12 @@ namespace UniT.Data.DI
             container.AddInterfaces<ConverterManager>();
         }
 
+        public static void AddConverterManager(this DependencyContainer container, SeparatorConfig separatorConfig, IFormatProvider formatProvider)
+        {
+            container.AddDefaultConverters(separatorConfig, formatProvider);
+            container.AddInterfaces<ConverterManager>();
+        }
+
         public static void AddDefaultConverters(this DependencyContainer container)
         {
             container.AddDefaultConverters(

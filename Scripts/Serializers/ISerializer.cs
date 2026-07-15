@@ -2,6 +2,8 @@
 namespace UniT.Data
 {
     using System;
+    using System.Threading;
+    using Cysharp.Threading.Tasks;
 
     public interface ISerializer
     {
@@ -9,8 +11,8 @@ namespace UniT.Data
 
         public bool CanSerialize(Type type);
 
-        public object Deserialize(Type type, object rawData);
+        public UniTask<object> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default);
 
-        public object Serialize(Type type, object data);
+        public UniTask<object> SerializeAsync(Type type, object data, CancellationToken cancellationToken = default);
     }
 }

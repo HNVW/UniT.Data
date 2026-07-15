@@ -19,7 +19,7 @@ namespace UniT.Data
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException($"Cannot convert '{str}' to '{type.Name}' with '{this.GetType().Name}': {e.Message}");
+                throw new InvalidOperationException($"Failed to convert '{str}' to '{type.Name}' with '{this.GetType().Name}' - {e.Message}");
             }
         }
 
@@ -31,7 +31,7 @@ namespace UniT.Data
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException($"Cannot convert '{type.Name}' '{obj}' to string with '{this.GetType().Name}': {e.Message}");
+                throw new InvalidOperationException($"Failed to convert '{type.Name}' '{obj}' with '{this.GetType().Name}' - {e.Message}");
             }
         }
 

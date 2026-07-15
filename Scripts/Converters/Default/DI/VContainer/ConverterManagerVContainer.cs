@@ -17,6 +17,12 @@ namespace UniT.Data.DI
             builder.Register<ConverterManager>(Lifetime.Singleton).AsImplementedInterfaces();
         }
 
+        public static void RegisterConverterManager(this IContainerBuilder builder, SeparatorConfig separatorConfig, IFormatProvider formatProvider)
+        {
+            builder.RegisterDefaultConverters(separatorConfig, formatProvider);
+            builder.Register<ConverterManager>(Lifetime.Singleton).AsImplementedInterfaces();
+        }
+
         public static void RegisterDefaultConverters(this IContainerBuilder builder)
         {
             builder.RegisterDefaultConverters(

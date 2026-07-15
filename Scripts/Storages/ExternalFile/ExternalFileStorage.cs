@@ -32,12 +32,12 @@ namespace UniT.Data
 
         bool IStorage.CanStore(Type type) => type == typeof(byte[]) || type == typeof(string);
 
-        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             return this.GetFilePathAsync(key, progress, cancellationToken).ContinueWith(Item.IsNotNull);
         }
 
-        public async UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        public async UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             var path = await this.GetFilePathAsync(key, progress, cancellationToken)
                 ?? throw new KeyNotFoundException($"{key} not found");

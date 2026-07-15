@@ -4,7 +4,6 @@ namespace UniT.Data
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Runtime.CompilerServices;
     using System.Threading;
     using Cysharp.Threading.Tasks;
     using Extensions;
@@ -24,12 +23,12 @@ namespace UniT.Data
 
         bool IStorage.CanStore(Type type) => type == typeof(byte[]) || type == typeof(string);
 
-        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        public UniTask<bool> ContainsAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             return UniTask.FromResult(File.Exists(GetPath(key)));
         }
 
-        public async UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        public async UniTask<object> ReadAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             if (type == typeof(byte[]))
             {
@@ -42,7 +41,7 @@ namespace UniT.Data
             throw new NotSupportedException($"Unsupported type: {type.Name}");
         }
 
-        public async UniTask WriteAsync(string key, object value, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        public async UniTask WriteAsync(string key, object value, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             var tempPath = GetTempPath(key);
             Directory.CreateDirectory(Path.GetDirectoryName(tempPath)!);
@@ -82,10 +81,8 @@ namespace UniT.Data
             }, this.dirtyKeys);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string GetPath(string key) => Path.Combine(PersistentDataPath, key);
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static string GetTempPath(string key) => GetPath(key) + ".tmp";
     }
 }
