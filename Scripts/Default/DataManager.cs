@@ -44,6 +44,11 @@ namespace UniT.Data
             return this.SaveAsync(key, this.cache[key], progress, cancellationToken);
         }
 
+        UniTask IDataManager.SaveAsync(string key, object data, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            return this.SaveAsync(key, this.cache[key] = data, progress, cancellationToken);
+        }
+
         UniTask IDataManager.SaveAllAsync(IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return this.cache.WhereValue(data => data is IWritableData)
@@ -54,8 +59,6 @@ namespace UniT.Data
                 )
                 .ContinueWith(this.Flush);
         }
-
-        void IDataManager.Update(string key, object data) => this.cache[key] = data;
 
         void IDataManager.Unload(string key) => this.cache.Remove(key);
 

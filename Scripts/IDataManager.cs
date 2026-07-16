@@ -12,9 +12,9 @@ namespace UniT.Data
 
         public UniTask SaveAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
-        public UniTask SaveAllAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default);
+        public UniTask SaveAsync(string key, object data, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
-        public void Update(string key, object data);
+        public UniTask SaveAllAsync(IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         public void Unload(string key);
 
@@ -28,7 +28,7 @@ namespace UniT.Data
 
         public UniTask SaveAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(type.GetKey(), progress, cancellationToken);
 
-        public void Update(object data) => this.Update(data.GetType().GetKey(), data);
+        public UniTask SaveAsync(object data, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(data.GetType().GetKey(), data, progress, cancellationToken);
 
         public void Unload(Type type) => this.Unload(type.GetKey());
 
