@@ -5,23 +5,27 @@ namespace UniT.Data
     using Google.Protobuf;
     using UnityEngine.Scripting;
 
-    public sealed class ProtobufSerializer : Serializer<byte[], IMessage>
+    public sealed class ProtobufSerializer : Serializer
     {
         [Preserve]
         public ProtobufSerializer()
         {
         }
 
-        public override IMessage Deserialize(Type type, byte[] rawData)
+        protected override Type RawDataType => typeof(byte[]);
+
+        protected override bool CanSerialize(Type type) => typeof(IMessage).IsAssignableFrom(type);
+
+        public override object Deserialize(Type type, object rawData)
         {
             var data = (IMessage)Activator.CreateInstance(type);
-            data.MergeFrom(rawData);
+            data.MergeFrom((byte[])rawData);
             return data;
         }
 
-        public override byte[] Serialize(Type type, IMessage data)
+        public override object Serialize(Type type, object data)
         {
-            return data.ToByteArray();
+            return ((IMessage)data).ToByteArray();
         }
     }
 }

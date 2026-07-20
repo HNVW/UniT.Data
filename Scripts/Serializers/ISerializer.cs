@@ -14,5 +14,9 @@ namespace UniT.Data
         public UniTask<object> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default);
 
         public UniTask<object> SerializeAsync(Type type, object data, CancellationToken cancellationToken = default);
+
+        public UniTask<T> DeserializeAsync<T>(object rawData, CancellationToken cancellationToken = default) where T : notnull;
+
+        public UniTask<object> SerializeAsync<T>(T data, CancellationToken cancellationToken = default) where T : notnull;
     }
 }

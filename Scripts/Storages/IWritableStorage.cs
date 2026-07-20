@@ -7,7 +7,7 @@ namespace UniT.Data
 
     public interface IWritableStorage : IStorage
     {
-        public UniTask WriteAsync(string key, object value, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
+        public UniTask WriteAsync(string key, object value, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
         public void Flush();
     }

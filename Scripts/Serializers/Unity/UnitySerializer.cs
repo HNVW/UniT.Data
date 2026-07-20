@@ -5,15 +5,19 @@ namespace UniT.Data
     using UnityEngine.Scripting;
     using Object = UnityEngine.Object;
 
-    public sealed class UnitySerializer : Serializer<Object, Object>
+    public sealed class UnitySerializer : Serializer
     {
         [Preserve]
         public UnitySerializer()
         {
         }
 
-        public override Object Deserialize(Type type, Object rawData) => rawData;
+        protected override Type RawDataType => typeof(Object);
 
-        public override Object Serialize(Type type, Object data) => data;
+        protected override bool CanSerialize(Type type) => typeof(Object).IsAssignableFrom(type);
+
+        public override object Deserialize(Type type, object rawData) => rawData;
+
+        public override object Serialize(Type type, object data) => data;
     }
 }

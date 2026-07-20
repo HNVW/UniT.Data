@@ -12,7 +12,7 @@ namespace UniT.Data
     using Extensions;
     using UnityEngine.Scripting;
 
-    public sealed class CsvSerializer : Serializer<string, ICsvData>
+    public sealed class CsvSerializer : Serializer
     {
         private readonly CsvConfiguration configuration;
         private readonly IConverterManager converterManager;
@@ -24,9 +24,13 @@ namespace UniT.Data
             this.converterManager = converterManager;
         }
 
-        public override ICsvData Deserialize(Type type, string rawData)
+        protected override Type RawDataType => typeof(string);
+
+        protected override bool CanSerialize(Type type) => typeof(ICsvData).IsAssignableFrom(type);
+
+        public override object Deserialize(Type type, object rawData)
         {
-            using var reader = new CsvReader(new StringReader(rawData), this.configuration);
+            using var reader = new CsvReader(new StringReader((string)rawData), this.configuration);
             var deserializer = new Deserializer(type, reader, this.converterManager);
 
             deserializer.Reset();
@@ -38,13 +42,13 @@ namespace UniT.Data
             return deserializer.Data;
         }
 
-        public override string Serialize(Type type, ICsvData data)
+        public override object Serialize(Type type, object data)
         {
             using var stringWriter = new StringWriter();
             using var writer = new CsvWriter(stringWriter, this.configuration);
             var serializer = new Serializer(writer, this.converterManager);
 
-            if (!serializer.Reset(data)) return string.Empty;
+            if (!serializer.Reset((ICsvData)data)) return string.Empty;
 
             foreach (var header in serializer.GetHeaders())
             {
@@ -111,11 +115,12 @@ namespace UniT.Data
                 this.normalFields = normalFields
                     .Select(static (field, state) =>
                     {
-                        var column = field.GetCsvColumn(state.prefix);
-                        var index = state.@this.reader.GetFieldIndex(column);
-                        var converter = state.@this.converterManager.GetConverter(field.FieldType);
+                        var (@this, rowType, prefix) = state;
+                        var column = field.GetCsvColumn(prefix);
+                        var index = @this.reader.GetFieldIndex(column);
+                        var converter = @this.converterManager.GetConverter(field.FieldType);
 
-                        if (index < 0 && !field.IsCsvOptional()) throw new InvalidOperationException($"Column {column} not found for {state.rowType.Name}. If this is intentional, add [CsvIgnore] or [CsvOptional] attribute to the field.");
+                        if (index < 0 && !field.IsCsvOptional()) throw new InvalidOperationException($"Column {column} not found for {rowType.Name}. If this is intentional, add [CsvIgnore] or [CsvOptional] attribute to the field.");
 
                         return (field, index, converter);
                     }, (@this: this, rowType, prefix))

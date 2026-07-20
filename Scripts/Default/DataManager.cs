@@ -39,14 +39,30 @@ namespace UniT.Data
                 : this.LoadAsync(key, type, progress, cancellationToken);
         }
 
-        UniTask IDataManager.SaveAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        UniTask<T> IDataManager.LoadAsync<T>(string key, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return this.SaveAsync(key, this.cache[key], progress, cancellationToken);
+            return cache
+                ? this.cache.GetOrAddAsync(key, static state => state.@this.LoadAsync<T>(state.key, state.progress, state.cancellationToken).ContinueWith(data => (object)data), (@this: this, key, progress, cancellationToken))
+                    .ContinueWith(data => (T)data)
+                : this.LoadAsync<T>(key, progress, cancellationToken);
         }
 
-        UniTask IDataManager.SaveAsync(string key, object data, IProgress<float>? progress, CancellationToken cancellationToken)
+        UniTask IDataManager.SaveAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return this.SaveAsync(key, this.cache[key] = data, progress, cancellationToken);
+            var data = this.cache[key];
+            return this.SaveAsync(key, data.GetType(), data, progress, cancellationToken);
+        }
+
+        UniTask IDataManager.SaveAsync(string key, Type type, object data, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            if (cache) this.cache[key] = data;
+            return this.SaveAsync(key, type, data, progress, cancellationToken);
+        }
+
+        UniTask IDataManager.SaveAsync<T>(string key, T data, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            if (cache) this.cache[key] = data;
+            return this.SaveAsync(key, data, progress, cancellationToken);
         }
 
         UniTask IDataManager.SaveAllAsync(IProgress<float>? progress, CancellationToken cancellationToken)
@@ -94,15 +110,58 @@ namespace UniT.Data
             return newData;
         }
 
-        private async UniTask SaveAsync(string key, object data, IProgress<float>? progress, CancellationToken cancellationToken)
+        private async UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress, CancellationToken cancellationToken) where T : notnull, new()
         {
-            foreach (var (serializer, storage) in this.GetSerializerAndStorage(data.GetType()))
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(typeof(T)))
+            {
+                if (storage is not IReadableStorage readableStorage) continue;
+                if (!await readableStorage.ContainsAsync(key, cancellationToken: cancellationToken)) continue;
+                try
+                {
+                    var rawData = await readableStorage.ReadAsync(key, serializer.RawDataType, progress, cancellationToken);
+                    var savedData = await serializer.DeserializeAsync<T>(rawData, cancellationToken);
+                    this.logger.Debug($"Loaded {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
+                    return savedData;
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException($"Failed to load {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
+                }
+            }
+            var newData = new T();
+            this.logger.Debug($"Instantiated {key}");
+            return newData;
+        }
+
+        private async UniTask SaveAsync(string key, Type type, object data, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(type))
             {
                 if (storage is not IWritableStorage writableStorage) continue;
                 try
                 {
-                    var rawData = await serializer.SerializeAsync(data.GetType(), data, cancellationToken);
-                    await writableStorage.WriteAsync(key, rawData, serializer.RawDataType, progress, cancellationToken);
+                    var rawData = await serializer.SerializeAsync(type, data, cancellationToken);
+                    await writableStorage.WriteAsync(key, rawData, progress, cancellationToken);
+                    this.logger.Debug($"Saved {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
+                    return;
+                }
+                catch (Exception e)
+                {
+                    throw new InvalidOperationException($"Failed to save {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
+                }
+            }
+            throw new InvalidOperationException($"No writable storage found for {key}");
+        }
+
+        private async UniTask SaveAsync<T>(string key, T data, IProgress<float>? progress, CancellationToken cancellationToken) where T : notnull
+        {
+            foreach (var (serializer, storage) in this.GetSerializerAndStorage(typeof(T)))
+            {
+                if (storage is not IWritableStorage writableStorage) continue;
+                try
+                {
+                    var rawData = await serializer.SerializeAsync(data, cancellationToken);
+                    await writableStorage.WriteAsync(key, rawData, progress, cancellationToken);
                     this.logger.Debug($"Saved {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}'");
                     return;
                 }
@@ -129,14 +188,15 @@ namespace UniT.Data
                 type,
                 static state =>
                 {
+                    var (@this, type) = state;
                     var result = IterTools.Product(
-                            state.@this.serializers.Where(static (serializer, type) => serializer.CanSerialize(type), state.type),
-                            state.@this.storages.Where(static (storage, type) => typeof(IWritableData).IsAssignableFrom(type) == storage is IWritableStorage, state.type)
+                            @this.serializers.Where(static (serializer, type) => serializer.CanSerialize(type), type),
+                            @this.storages.Where(static (storage, type) => typeof(IWritableData).IsAssignableFrom(type) == storage is IWritableStorage, type)
                         )
                         .Where(static (serializer, storage) => storage.CanStore(serializer.RawDataType))
                         .Reverse()
                         .ToArray();
-                    if (result.Length is 0) throw new KeyNotFoundException($"No serializer or storage found for {state.type.Name}");
+                    if (result.Length is 0) throw new KeyNotFoundException($"No serializer or storage found for {type.Name}");
                     return result;
                 },
                 (@this: this, type)

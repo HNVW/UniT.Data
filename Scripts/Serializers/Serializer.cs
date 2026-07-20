@@ -6,17 +6,21 @@ namespace UniT.Data
     using Cysharp.Threading.Tasks;
     using Extensions;
 
-    public abstract class Serializer<TRawData, TData> : ISerializer where TRawData : notnull where TData : notnull
+    public abstract class Serializer : ISerializer
     {
-        Type ISerializer.RawDataType => typeof(TRawData);
+        Type ISerializer.RawDataType => this.RawDataType;
 
         bool ISerializer.CanSerialize(Type type) => this.CanSerialize(type);
 
-        async UniTask<object> ISerializer.DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken)
+        public virtual async UniTask<object> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default)
         {
             try
             {
-                return await this.DeserializeAsync(type, (TRawData)rawData, cancellationToken);
+#if !UNITY_WEBGL
+                return await UniTask.RunOnThreadPool(() => this.Deserialize(type, rawData), cancellationToken: cancellationToken);
+#else
+                return this.Deserialize(type, rawData);
+#endif
             }
             catch (Exception e)
             {
@@ -24,11 +28,11 @@ namespace UniT.Data
             }
         }
 
-        async UniTask<object> ISerializer.SerializeAsync(Type type, object data, CancellationToken cancellationToken)
+        public virtual UniTask<object> SerializeAsync(Type type, object data, CancellationToken cancellationToken = default)
         {
             try
             {
-                return await this.SerializeAsync(type, (TData)data, cancellationToken);
+                return UniTask.FromResult(this.Serialize(type, data));
             }
             catch (Exception e)
             {
@@ -36,32 +40,44 @@ namespace UniT.Data
             }
         }
 
-        protected virtual bool CanSerialize(Type type) => typeof(TData).IsAssignableFrom(type);
-
-        public abstract TData Deserialize(Type type, TRawData rawData);
-
-        public abstract TRawData Serialize(Type type, TData data);
-
-        public virtual T Deserialize<T>(TRawData rawData) where T : TData => (T)this.Deserialize(typeof(T), rawData);
-
-        public virtual TRawData Serialize<T>(T data) where T : TData => this.Serialize(typeof(T), data);
-
-        public virtual UniTask<TData> DeserializeAsync(Type type, TRawData rawData, CancellationToken cancellationToken = default)
+        public virtual async UniTask<T> DeserializeAsync<T>(object rawData, CancellationToken cancellationToken = default) where T : notnull
         {
+            try
+            {
 #if !UNITY_WEBGL
-            return UniTask.RunOnThreadPool(() => this.Deserialize(type, rawData), cancellationToken: cancellationToken);
+                return await UniTask.RunOnThreadPool(() => this.Deserialize<T>(rawData), cancellationToken: cancellationToken);
 #else
-            return UniTask.FromResult(this.Deserialize(type, rawData));
+                return this.Deserialize<T>(rawData);
 #endif
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException($"Failed to deserialize '{rawData.ToString().Truncate(64)}' to '{typeof(T).Name}' with '{this.GetType().Name}' - {e.Message}");
+            }
         }
 
-        public virtual UniTask<TRawData> SerializeAsync(Type type, TData data, CancellationToken cancellationToken = default)
+        public virtual UniTask<object> SerializeAsync<T>(T data, CancellationToken cancellationToken = default) where T : notnull
         {
-            return UniTask.FromResult(this.Serialize(type, data));
+            try
+            {
+                return UniTask.FromResult(this.Serialize(data));
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException($"Failed to serialize '{typeof(T).Name}' '{data}' with '{this.GetType().Name}' - {e.Message}");
+            }
         }
 
-        public virtual UniTask<T> DeserializeAsync<T>(TRawData rawData, CancellationToken cancellationToken = default) where T : TData => this.DeserializeAsync(typeof(T), rawData, cancellationToken).ContinueWith(static data => (T)data);
+        protected abstract Type RawDataType { get; }
 
-        public virtual UniTask<TRawData> SerializeAsync<T>(T data, CancellationToken cancellationToken = default) where T : TData => this.SerializeAsync(typeof(T), data, cancellationToken);
+        protected abstract bool CanSerialize(Type type);
+
+        public abstract object Deserialize(Type type, object rawData);
+
+        public abstract object Serialize(Type type, object data);
+
+        public virtual T Deserialize<T>(object rawData) where T : notnull => (T)this.Deserialize(typeof(T), rawData);
+
+        public virtual object Serialize<T>(T data) where T : notnull => this.Serialize(typeof(T), data);
     }
 }

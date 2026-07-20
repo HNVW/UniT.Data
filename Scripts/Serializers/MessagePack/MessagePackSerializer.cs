@@ -7,7 +7,7 @@ namespace UniT.Data
     using UnityEngine.Scripting;
     using BaseSerializer = MessagePack.MessagePackSerializer;
 
-    public sealed class MessagePackSerializer : Serializer<byte[], object>
+    public sealed class MessagePackSerializer : Serializer
     {
         private readonly MessagePackSerializerOptions options;
 
@@ -17,24 +17,26 @@ namespace UniT.Data
             this.options = options;
         }
 
+        protected override Type RawDataType => typeof(byte[]);
+
         protected override bool CanSerialize(Type type) => type.GetCustomAttribute<MessagePackObjectAttribute>() is not null;
 
-        public override object Deserialize(Type type, byte[] rawData)
+        public override object Deserialize(Type type, object rawData)
         {
-            return BaseSerializer.Deserialize(type, rawData, this.options)!;
+            return BaseSerializer.Deserialize(type, (byte[])rawData, this.options)!;
         }
 
-        public override byte[] Serialize(Type type, object data)
+        public override object Serialize(Type type, object data)
         {
             return BaseSerializer.Serialize(type, data, this.options);
         }
 
-        public override T Deserialize<T>(byte[] rawData)
+        public override T Deserialize<T>(object rawData)
         {
-            return BaseSerializer.Deserialize<T>(rawData, this.options);
+            return BaseSerializer.Deserialize<T>((byte[])rawData, this.options);
         }
 
-        public override byte[] Serialize<T>(T data)
+        public override object Serialize<T>(T data)
         {
             return BaseSerializer.Serialize(data, this.options);
         }

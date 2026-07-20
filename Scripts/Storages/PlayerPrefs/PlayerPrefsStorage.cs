@@ -34,7 +34,7 @@ namespace UniT.Data
             throw new NotSupportedException($"Unsupported type: {type.Name}");
         }
 
-        public UniTask WriteAsync(string key, object value, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
+        public UniTask WriteAsync(string key, object value, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             switch (value)
             {

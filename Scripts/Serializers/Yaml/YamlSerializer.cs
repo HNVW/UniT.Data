@@ -6,7 +6,7 @@ namespace UniT.Data
     using UnityEngine.Scripting;
     using BaseSerializer = SharpYaml.YamlSerializer;
 
-    public sealed class YamlSerializer : Serializer<string, object>
+    public sealed class YamlSerializer : Serializer
     {
         private readonly YamlSerializerOptions options;
 
@@ -16,24 +16,26 @@ namespace UniT.Data
             this.options = options;
         }
 
+        protected override Type RawDataType => typeof(string);
+
         protected override bool CanSerialize(Type type) => true;
 
-        public override object Deserialize(Type type, string rawData)
+        public override object Deserialize(Type type, object rawData)
         {
-            return BaseSerializer.Deserialize(rawData, type, this.options)!;
+            return BaseSerializer.Deserialize((string)rawData, type, this.options)!;
         }
 
-        public override string Serialize(Type type, object data)
+        public override object Serialize(Type type, object data)
         {
             return BaseSerializer.Serialize(data, type, this.options);
         }
 
-        public override T Deserialize<T>(string rawData)
+        public override T Deserialize<T>(object rawData)
         {
-            return BaseSerializer.Deserialize<T>(rawData, this.options)!;
+            return BaseSerializer.Deserialize<T>((string)rawData, this.options)!;
         }
 
-        public override string Serialize<T>(T data)
+        public override object Serialize<T>(T data)
         {
             return BaseSerializer.Serialize(data, this.options);
         }

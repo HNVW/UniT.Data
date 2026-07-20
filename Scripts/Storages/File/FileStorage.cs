@@ -41,7 +41,7 @@ namespace UniT.Data
             throw new NotSupportedException($"Unsupported type: {type.Name}");
         }
 
-        public async UniTask WriteAsync(string key, object value, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
+        public async UniTask WriteAsync(string key, object value, IProgress<float>? progress = null, CancellationToken cancellationToken = default)
         {
             var tempPath = GetTempPath(key);
             Directory.CreateDirectory(Path.GetDirectoryName(tempPath)!);
