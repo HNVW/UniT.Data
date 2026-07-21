@@ -49,7 +49,7 @@ namespace UniT.Data
 
         UniTask IDataManager.SaveAsync(string key, IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            var data = this.cache[key];
+            if (!this.cache.TryGetValue(key, out var data)) throw new InvalidOperationException($"{key} not loaded");
             return this.SaveAsync(key, data.GetType(), data, progress, cancellationToken);
         }
 
