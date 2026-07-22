@@ -69,7 +69,7 @@ namespace UniT.Data
         {
             return this.cache.WhereValue(data => data is IWritableData)
                 .ForEachAsync(
-                    (kv, progress, cancellationToken) => this.SaveAsync(kv.Key, kv.Value, progress, cancellationToken),
+                    (kv, progress, cancellationToken) => this.SaveAsync(kv.Key, kv.Value.GetType(), kv.Value, progress, cancellationToken),
                     progress,
                     cancellationToken
                 )
