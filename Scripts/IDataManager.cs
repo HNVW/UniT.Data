@@ -8,9 +8,13 @@ namespace UniT.Data
 
     public interface IDataManager
     {
+        public UniTask<bool> ContainsAsync(string key, Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
+
+        public UniTask<bool> ContainsAsync<T>(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull;
+
         public UniTask<object> LoadAsync(string key, Type type, bool cache = false, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
-        public UniTask<T> LoadAsync<T>(string key, bool cache = false, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull, new();
+        public UniTask<T> LoadAsync<T>(string key, bool cache = false, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull;
 
         public UniTask SaveAsync(string key, IProgress<float>? progress = null, CancellationToken cancellationToken = default);
 
@@ -26,6 +30,8 @@ namespace UniT.Data
 
         #region Implicit Key
 
+        public UniTask<bool> ContainsAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.ContainsAsync(type.GetKey(), type, progress, cancellationToken);
+
         public UniTask<object> LoadAsync(Type type, bool cache = false, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.LoadAsync(type.GetKey(), type, cache, progress, cancellationToken);
 
         public UniTask SaveAsync(Type type, IProgress<float>? progress = null, CancellationToken cancellationToken = default) => this.SaveAsync(type.GetKey(), progress, cancellationToken);
@@ -34,7 +40,9 @@ namespace UniT.Data
 
         public void Unload(Type type) => this.Unload(type.GetKey());
 
-        public UniTask<T> LoadAsync<T>(bool cache = false, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull, new() => this.LoadAsync<T>(typeof(T).GetKey(), cache, progress, cancellationToken);
+        public UniTask<bool> ContainsAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.ContainsAsync<T>(typeof(T).GetKey(), progress, cancellationToken);
+
+        public UniTask<T> LoadAsync<T>(bool cache = false, IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.LoadAsync<T>(typeof(T).GetKey(), cache, progress, cancellationToken);
 
         public UniTask SaveAsync<T>(IProgress<float>? progress = null, CancellationToken cancellationToken = default) where T : notnull => this.SaveAsync(typeof(T).GetKey(), progress, cancellationToken);
 

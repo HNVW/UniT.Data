@@ -32,6 +32,16 @@ namespace UniT.Data
 
         #endregion
 
+        UniTask<bool> IDataManager.ContainsAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            return this.ContainsAsync(key, type, progress, cancellationToken);
+        }
+
+        UniTask<bool> IDataManager.ContainsAsync<T>(string key, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            return this.ContainsAsync(key, typeof(T), progress, cancellationToken);
+        }
+
         UniTask<object> IDataManager.LoadAsync(string key, Type type, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return cache
@@ -87,6 +97,17 @@ namespace UniT.Data
             this.logger.Debug("Disposed");
         }
 
+        private async UniTask<bool> ContainsAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
+        {
+            foreach (var (_, storage) in this.GetSerializerAndStorage(type))
+            {
+                if (storage is not IReadableStorage readableStorage) continue;
+                if (!await readableStorage.ContainsAsync(key, progress, cancellationToken)) continue;
+                return true;
+            }
+            return false;
+        }
+
         private async UniTask<object> LoadAsync(string key, Type type, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             foreach (var (serializer, storage) in this.GetSerializerAndStorage(type))
@@ -105,12 +126,10 @@ namespace UniT.Data
                     throw new InvalidOperationException($"Failed to load {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
                 }
             }
-            var newData = type.GetEmptyConstructor()();
-            this.logger.Debug($"Instantiated {key}");
-            return newData;
+            throw new InvalidOperationException($"No readable storage found for {key}");
         }
 
-        private async UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress, CancellationToken cancellationToken) where T : notnull, new()
+        private async UniTask<T> LoadAsync<T>(string key, IProgress<float>? progress, CancellationToken cancellationToken) where T : notnull
         {
             foreach (var (serializer, storage) in this.GetSerializerAndStorage(typeof(T)))
             {
@@ -128,9 +147,7 @@ namespace UniT.Data
                     throw new InvalidOperationException($"Failed to load {key} with '{serializer.GetType().Name}' & '{storage.GetType().Name}' - {e.Message}");
                 }
             }
-            var newData = new T();
-            this.logger.Debug($"Instantiated {key}");
-            return newData;
+            throw new InvalidOperationException($"No readable storage found for {key}");
         }
 
         private async UniTask SaveAsync(string key, Type type, object data, IProgress<float>? progress, CancellationToken cancellationToken)
