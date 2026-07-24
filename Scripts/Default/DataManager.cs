@@ -19,7 +19,7 @@ namespace UniT.Data
         private readonly ILogger logger;
 
         private readonly Dictionary<string, object> cache = new();
-        private readonly Dictionary<Type, IReadOnlyList<(ISerializer, IStorage)>> serializerAndStorageCache = new();
+        private readonly Dictionary<Type, (ISerializer, IStorage)[]> serializerAndStorageCache = new();
 
         [Preserve]
         public DataManager(IReadOnlyList<ISerializer> serializers, IReadOnlyList<IStorage> storages, ILoggerManager loggerManager)
@@ -52,8 +52,8 @@ namespace UniT.Data
         UniTask<T> IDataManager.LoadAsync<T>(string key, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return cache
-                ? this.cache.GetOrAddAsync(key, static state => state.@this.LoadAsync<T>(state.key, state.progress, state.cancellationToken).ContinueWith(data => (object)data), (@this: this, key, progress, cancellationToken))
-                    .ContinueWith(data => (T)data)
+                ? this.cache.GetOrAddAsync(key, static state => state.@this.LoadAsync<T>(state.key, state.progress, state.cancellationToken).ContinueWith(static data => (object)data), (@this: this, key, progress, cancellationToken))
+                    .ContinueWith(static data => (T)data)
                 : this.LoadAsync<T>(key, progress, cancellationToken);
         }
 
@@ -77,11 +77,12 @@ namespace UniT.Data
 
         UniTask IDataManager.SaveAllAsync(IProgress<float>? progress, CancellationToken cancellationToken)
         {
-            return this.cache.WhereValue(data => data is IWritableData)
+            return this.cache.WhereValue(static data => data is IWritableData)
                 .ForEachAsync(
-                    (kv, progress, cancellationToken) => this.SaveAsync(kv.Key, kv.Value.GetType(), kv.Value, progress, cancellationToken),
+                    static (kv, @this, progress, cancellationToken) => @this.SaveAsync(kv.Key, kv.Value.GetType(), kv.Value, progress, cancellationToken),
                     progress,
-                    cancellationToken
+                    cancellationToken,
+                    this
                 )
                 .ContinueWith(this.Flush);
         }
@@ -199,7 +200,7 @@ namespace UniT.Data
             }
         }
 
-        private IReadOnlyList<(ISerializer, IStorage)> GetSerializerAndStorage(Type type)
+        private (ISerializer, IStorage)[] GetSerializerAndStorage(Type type)
         {
             return this.serializerAndStorageCache.GetOrAdd(
                 type,

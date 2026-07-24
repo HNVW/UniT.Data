@@ -62,7 +62,7 @@ namespace UniT.Data
             };
             var itemType = SupportedTypes[type];
             var converter = this.Manager.GetConverter(itemType);
-            return items.Select(item => converter.ConvertToString(itemType, item)).Join(this.separator);
+            return items.Select(static (item, state) => state.converter.ConvertToString(state.itemType, item), (converter, itemType)).Join(this.separator);
         }
     }
 }
