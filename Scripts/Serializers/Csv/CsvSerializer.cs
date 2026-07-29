@@ -123,7 +123,7 @@ namespace UniT.Data
                         if (index < 0 && !field.IsCsvOptional()) throw new InvalidOperationException($"Column {column} not found for {rowType.Name}. If this is intentional, add [CsvIgnore] or [CsvOptional] attribute to the field.");
 
                         return (field, index, converter);
-                    }, (@this: this, rowType, prefix))
+                    }, (this, rowType, prefix))
                     .WhereSecond(static index => index >= 0)
                     .ToArray();
 

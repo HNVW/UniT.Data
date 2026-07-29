@@ -5,7 +5,6 @@ namespace UniT.Data
     using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.Linq;
-    using Extensions;
     using UnityEngine.Scripting;
 
     public sealed class ConverterManager : IConverterManager
@@ -23,11 +22,12 @@ namespace UniT.Data
 
         IConverter IConverterManager.GetConverter(Type type)
         {
-            if (this.converterCache.TryGetValue(type, out var converter)) return converter;
-            converter = this.converters.LastOrDefault(converter => converter.CanConvert(type))
-                ?? throw new KeyNotFoundException($"No converter found for {type.Name}");
-            this.converterCache.TryAdd(type, converter);
-            return converter;
+            return this.converterCache.GetOrAdd(
+                type,
+                static (type, converters) => converters.LastOrDefault(converter => converter.CanConvert(type))
+                    ?? throw new KeyNotFoundException($"No converter found for {type.Name}"),
+                this.converters
+            );
         }
     }
 }

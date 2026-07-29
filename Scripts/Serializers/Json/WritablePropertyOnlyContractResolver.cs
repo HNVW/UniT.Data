@@ -17,17 +17,17 @@ namespace UniT.Data
 
             var constructors = type.GetConstructors();
 
-            var constructor = constructors.SingleOrDefault(constructor => constructor.GetCustomAttribute<JsonConstructorAttribute>() is not null)
-                ?? constructors.MaxByOrDefault(constructor => constructor.GetParameters().Length);
+            var constructor = constructors.SingleOrDefault(static constructor => constructor.GetCustomAttribute<JsonConstructorAttribute>() is not null)
+                ?? constructors.MaxByOrDefault(static constructor => constructor.GetParameters().Length);
 
-            if (constructor is null) return properties.Where(property => property.Writable).ToArray();
+            if (constructor is null) return properties.Where(static property => property.Writable).ToArray();
 
             var propertyNames = constructor.GetParameters()
-                .Select(parameter => parameter.GetCustomAttribute<JsonPropertyAttribute>() is { PropertyName: { } name } ? name : parameter.Name)
+                .Select(static parameter => parameter.GetCustomAttribute<JsonPropertyAttribute>() is { PropertyName: { } name } ? name : parameter.Name)
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             return properties
-                .Where((property, propertyNames) => property.Writable || propertyNames.Contains(property.PropertyName!), propertyNames)
+                .Where(static (property, propertyNames) => property.Writable || propertyNames.Contains(property.PropertyName!), propertyNames)
                 .ToArray();
         }
     }

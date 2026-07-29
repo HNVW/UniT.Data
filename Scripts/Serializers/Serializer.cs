@@ -5,6 +5,7 @@ namespace UniT.Data
     using System.Threading;
     using Cysharp.Threading.Tasks;
     using Extensions;
+    using UniTaskExtensions = Extensions.UniTaskExtensions;
 
     public abstract class Serializer : ISerializer
     {
@@ -16,11 +17,7 @@ namespace UniT.Data
         {
             try
             {
-#if !UNITY_WEBGL
-                return await UniTask.RunOnThreadPool(() => this.Deserialize(type, rawData), cancellationToken: cancellationToken);
-#else
-                return this.Deserialize(type, rawData);
-#endif
+                return await UniTaskExtensions.RunOnThreadPool(static state => state.@this.Deserialize(state.type, state.rawData), (@this: this, type, rawData), cancellationToken);
             }
             catch (Exception e)
             {
@@ -44,11 +41,7 @@ namespace UniT.Data
         {
             try
             {
-#if !UNITY_WEBGL
-                return await UniTask.RunOnThreadPool(() => this.Deserialize<T>(rawData), cancellationToken: cancellationToken);
-#else
-                return this.Deserialize<T>(rawData);
-#endif
+                return await UniTaskExtensions.RunOnThreadPool(static state => state.@this.Deserialize<T>(state.rawData), (@this: this, rawData), cancellationToken);
             }
             catch (Exception e)
             {

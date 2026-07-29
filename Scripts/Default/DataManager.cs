@@ -217,7 +217,7 @@ namespace UniT.Data
                     if (result.Length is 0) throw new KeyNotFoundException($"No serializer or storage found for {type.Name}");
                     return result;
                 },
-                (@this: this, type)
+                (this, type)
             );
         }
     }

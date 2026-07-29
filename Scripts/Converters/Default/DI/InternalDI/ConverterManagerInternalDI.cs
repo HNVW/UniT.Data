@@ -4,7 +4,6 @@ namespace UniT.Data.DI
     using System;
     using System.Globalization;
     using InternalDI;
-    using JsonConverter = JsonConverter;
 
     public static class ConverterManagerInternalDI
     {

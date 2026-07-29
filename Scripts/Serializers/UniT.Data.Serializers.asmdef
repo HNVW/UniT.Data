@@ -4,6 +4,7 @@
   "noEngineReferences": true,
   "references": [
     "UniT.Extensions",
+    "UniT.Extensions.UniTask",
     "UniTask"
   ]
 }

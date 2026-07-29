@@ -15,6 +15,7 @@ namespace UniT.Data
     using UnityEngine;
     using UnityEngine.Scripting;
     using ILogger = Logging.ILogger;
+    using UniTaskExtensions = Extensions.UniTaskExtensions;
 
     public sealed class ExternalFileStorage : IReadableStorage
     {
@@ -155,55 +156,46 @@ namespace UniT.Data
             }
         }
 
-        private UniTask<bool> ValidateAndExtractAsync(CancellationToken cancellationToken)
+        private UniTask<bool> ValidateAndExtractAsync(CancellationToken cancellationToken) => UniTaskExtensions.RunOnThreadPool(() =>
         {
-#if !UNITY_WEBGL
-            return UniTask.RunOnThreadPool(ValidateAndExtract, cancellationToken: cancellationToken);
-#else
-            return UniTask.FromResult(ValidateAndExtract());
-#endif
-
-            bool ValidateAndExtract()
+            try
             {
-                try
+                this.logger.Debug($"Validating {version}");
+
+                if (!File.Exists(ZipFilePath))
                 {
-                    this.logger.Debug($"Validating {version}");
-
-                    if (!File.Exists(ZipFilePath))
-                    {
-                        this.logger.Error($"Zip file not found: {ZipFilePath}");
-                        return false;
-                    }
-
-                    var hash = ComputeHash(ZipFilePath);
-                    if (!string.Equals(hash, version, StringComparison.OrdinalIgnoreCase))
-                    {
-                        this.logger.Error($"Hash mismatch. Expected: {version}, Got: {hash}");
-                        File.Delete(ZipFilePath);
-                        return false;
-                    }
-
-                    this.logger.Debug($"Extracting {ZipFilePath} to {ExtractDirectory}");
-                    ZipFile.ExtractToDirectory(ZipFilePath, ExtractDirectory, true);
-
-                    this.logger.Debug("Validated");
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    this.logger.Error("Failed to validate or extract zip file");
-                    this.logger.Exception(e);
+                    this.logger.Error($"Zip file not found: {ZipFilePath}");
                     return false;
                 }
 
-                static string ComputeHash(string filePath)
+                var hash = ComputeHash(ZipFilePath);
+                if (!string.Equals(hash, version, StringComparison.OrdinalIgnoreCase))
                 {
-                    using var sha256 = SHA256.Create();
-                    using var zipFile = File.OpenRead(filePath);
-                    return BitConverter.ToString(sha256.ComputeHash(zipFile)).Replace("-", string.Empty);
+                    this.logger.Error($"Hash mismatch. Expected: {version}, Got: {hash}");
+                    File.Delete(ZipFilePath);
+                    return false;
                 }
+
+                this.logger.Debug($"Extracting {ZipFilePath} to {ExtractDirectory}");
+                ZipFile.ExtractToDirectory(ZipFilePath, ExtractDirectory, true);
+
+                this.logger.Debug("Validated");
+                return true;
             }
-        }
+            catch (Exception e)
+            {
+                this.logger.Error("Failed to validate or extract zip file");
+                this.logger.Exception(e);
+                return false;
+            }
+
+            static string ComputeHash(string filePath)
+            {
+                using var sha256 = SHA256.Create();
+                using var zipFile = File.OpenRead(filePath);
+                return BitConverter.ToString(sha256.ComputeHash(zipFile)).Replace("-", string.Empty);
+            }
+        }, cancellationToken);
 
         private string? GetFilePath(string name)
         {

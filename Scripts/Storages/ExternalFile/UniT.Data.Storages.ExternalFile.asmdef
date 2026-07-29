@@ -4,6 +4,7 @@
   "references": [
     "UniT.Data.Storages",
     "UniT.Extensions",
+    "UniT.Extensions.UniTask",
     "UniT.Logging",
     "UniT.ResourceManagement",
     "UniTask"
