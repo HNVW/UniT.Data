@@ -52,8 +52,7 @@ namespace UniT.Data
         UniTask<T> IDataManager.LoadAsync<T>(string key, bool cache, IProgress<float>? progress, CancellationToken cancellationToken)
         {
             return cache
-                ? this.cache.GetOrAddAsync(key, static state => state.@this.LoadAsync<T>(state.key, state.progress, state.cancellationToken).ContinueWith(static data => (object)data), (@this: this, key, progress, cancellationToken))
-                    .ContinueWith(static data => (T)data)
+                ? this.cache.GetOrAddAsync(key, static state => state.@this.LoadAsync<T>(state.key, state.progress, state.cancellationToken).UpCast<T, object>(), (@this: this, key, progress, cancellationToken)).DownCast<object, T>()
                 : this.LoadAsync<T>(key, progress, cancellationToken);
         }
 
