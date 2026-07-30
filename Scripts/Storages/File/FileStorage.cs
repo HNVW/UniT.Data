@@ -65,7 +65,7 @@ namespace UniT.Data
 
         public void Flush()
         {
-            this.dirtyKeys.SafeForEach(static (key, dirtyKeys) =>
+            this.dirtyKeys.SnapshotForEach(static (key, dirtyKeys) =>
             {
                 var tempPath = GetTempPath(key);
                 var path = GetPath(key);
