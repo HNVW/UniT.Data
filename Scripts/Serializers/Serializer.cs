@@ -13,17 +13,18 @@ namespace UniT.Data
 
         bool ISerializer.CanSerialize(Type type) => this.CanSerialize(type);
 
-        public virtual async UniTask<object> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default)
+        public virtual UniTask<object> DeserializeAsync(Type type, object rawData, CancellationToken cancellationToken = default) => UniTaskExtensions.RunOnThreadPool(static state =>
         {
+            var (@this, type, rawData) = state;
             try
             {
-                return await UniTaskExtensions.RunOnThreadPool(static state => state.@this.Deserialize(state.type, state.rawData), (@this: this, type, rawData), cancellationToken);
+                return @this.Deserialize(type, rawData);
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException($"Failed to deserialize '{rawData.ToString().Truncate(64)}' to '{type.Name}' with '{this.GetType().Name}' - {e.Message}");
+                throw new InvalidOperationException($"Failed to deserialize '{rawData.ToString().Truncate(64)}' to '{type.Name}' with '{@this.GetType().Name}' - {e.Message}");
             }
-        }
+        }, (this, type, rawData), cancellationToken);
 
         public virtual UniTask<object> SerializeAsync(Type type, object data, CancellationToken cancellationToken = default)
         {
@@ -37,17 +38,18 @@ namespace UniT.Data
             }
         }
 
-        public virtual async UniTask<T> DeserializeAsync<T>(object rawData, CancellationToken cancellationToken = default) where T : notnull
+        public virtual UniTask<T> DeserializeAsync<T>(object rawData, CancellationToken cancellationToken = default) where T : notnull => UniTaskExtensions.RunOnThreadPool(static state =>
         {
+            var (@this, rawData) = state;
             try
             {
-                return await UniTaskExtensions.RunOnThreadPool(static state => state.@this.Deserialize<T>(state.rawData), (@this: this, rawData), cancellationToken);
+                return @this.Deserialize<T>(rawData);
             }
             catch (Exception e)
             {
-                throw new InvalidOperationException($"Failed to deserialize '{rawData.ToString().Truncate(64)}' to '{typeof(T).Name}' with '{this.GetType().Name}' - {e.Message}");
+                throw new InvalidOperationException($"Failed to deserialize '{rawData.ToString().Truncate(64)}' to '{typeof(T).Name}' with '{@this.GetType().Name}' - {e.Message}");
             }
-        }
+        }, (this, rawData), cancellationToken);
 
         public virtual UniTask<object> SerializeAsync<T>(T data, CancellationToken cancellationToken = default) where T : notnull
         {
